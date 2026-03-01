@@ -10,6 +10,7 @@ export function AppProvider({ children }) {
   const [buildingsState, setBuildingsState] = useState(buildings)
   const [simulatingEvent, setSimulatingEvent] = useState(false)
   const [riskEventActive, setRiskEventActive] = useState(false)
+  const [insuranceFlag, setInsuranceFlag] = useState(false)
 
   // Risk event simulation — sprinkler pressure drop on bld-009
   const simulateRiskEvent = () => {
@@ -70,6 +71,8 @@ export function AppProvider({ children }) {
       resetRiskEvent,
       simulatingEvent,
       riskEventActive,
+      insuranceFlag,
+      setInsuranceFlag,
       dispatchUnit,
       t,
     }}>
