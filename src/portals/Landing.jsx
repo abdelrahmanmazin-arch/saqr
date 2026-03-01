@@ -2,11 +2,11 @@ import { useApp } from '../context/AppContext'
 import { ui } from '../data/i18n'
 import {
   ShieldCheck, Building2, Siren, BarChart3, ChevronLeft, ChevronRight,
-  Zap, Globe, Shield, TrendingUp, CheckCircle2, AlertTriangle
+  Zap, Globe, Shield, TrendingUp, CheckCircle2, AlertTriangle, Lock, Cpu
 } from 'lucide-react'
 
 export default function Landing() {
-  const { setPortal, t, lang, buildings, incidents } = useApp()
+  const { setPortal, t, lang, buildings, incidents, insuranceFlag } = useApp()
   const isRTL = lang === 'ar'
   const ArrowIcon = isRTL ? ChevronLeft : ChevronRight
 
@@ -62,6 +62,8 @@ export default function Landing() {
       title: t(ui.insurancePortal),
       desc: t(ui.insuranceDesc),
       tagline: { en: 'Price Accurately. Manage Risk.', ar: 'سعّر بدقة. أدر المخاطر.' },
+      flag: insuranceFlag,
+      flagLabel: { en: 'Policy Review Triggered', ar: 'مراجعة بوليصة مُفعَّلة' },
       caps: [
         { en: 'Dynamic risk-based pricing', ar: 'تسعير ديناميكي مبني على المخاطر' },
         { en: 'Verified MDRE risk scores', ar: 'درجات مخاطر MDRE المعتمدة' },
@@ -70,6 +72,24 @@ export default function Landing() {
       ],
     },
   ]
+
+  const madaniCard = {
+    id: 'madani',
+    icon: Cpu,
+    color: 'from-[#374151] to-[#1F2937]',
+    accentText: 'text-[#374151]',
+    accentBorder: 'border-[#374151]',
+    title: t({ en: 'Madani Tech Operations', ar: 'عمليات مدني تك' }),
+    desc: t({ en: 'Internal operator console', ar: 'لوحة تحكم المشغّل الداخلية' }),
+    tagline: { en: 'Platform-Wide Control.', ar: 'تحكم شامل بالمنصة.' },
+    locked: true,
+    caps: [
+      { en: 'AI model management & tuning', ar: 'إدارة نماذج الذكاء الاصطناعي وضبطها' },
+      { en: 'Platform-wide monitoring', ar: 'مراقبة شاملة للمنصة' },
+      { en: 'System configuration & APIs', ar: 'تهيئة النظام وواجهات API' },
+      { en: 'Multi-tenant role management', ar: 'إدارة الأدوار متعددة المستأجرين' },
+    ],
+  }
 
   const badges = [
     { icon: ShieldCheck, label: t(ui.sbc201) },
@@ -158,8 +178,8 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {portals.map((p) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            {[...portals, madaniCard].map((p) => {
               const Icon = p.icon
               return (
                 <div
@@ -167,7 +187,18 @@ export default function Landing() {
                   className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
                 >
                   {/* Card header */}
-                  <div className={`bg-gradient-to-br ${p.color} p-6 text-white`}>
+                  <div className={`bg-gradient-to-br ${p.color} p-6 text-white relative`}>
+                    {p.locked && (
+                      <div className="absolute top-3 end-3 flex items-center gap-1 px-2 py-0.5 bg-black/30 rounded-full text-[10px] font-semibold text-white/80">
+                        <Lock className="w-2.5 h-2.5" />
+                        {t({ en: 'Internal Use Only', ar: 'داخلي فقط' })}
+                      </div>
+                    )}
+                    {p.flag && (
+                      <div className="absolute top-3 end-3 flex items-center gap-1 px-2 py-0.5 bg-amber-400/90 rounded-full text-[10px] font-bold text-white animate-pulse">
+                        {t(p.flagLabel)}
+                      </div>
+                    )}
                     <div className="flex items-center gap-3 mb-3">
                       <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
                         <Icon className="w-5 h-5 text-white" />
@@ -185,17 +216,23 @@ export default function Landing() {
                     <ul className="space-y-2 flex-1">
                       {p.caps.map((cap, j) => (
                         <li key={j} className="flex items-start gap-2 text-sm text-gray-600">
-                          <CheckCircle2 className={`w-4 h-4 mt-0.5 flex-shrink-0 ${p.accentText}`} />
+                          {p.locked
+                            ? <Lock className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
+                            : <CheckCircle2 className={`w-4 h-4 mt-0.5 flex-shrink-0 ${p.accentText}`} />
+                          }
                           {t(cap)}
                         </li>
                       ))}
                     </ul>
                     <button
                       onClick={() => setPortal(p.id)}
-                      className={`mt-5 w-full py-2.5 rounded-xl border-2 ${p.accentBorder} ${p.accentText} font-semibold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2`}
+                      className={`mt-5 w-full py-2.5 rounded-xl border-2 ${p.accentBorder} ${p.accentText} font-semibold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2 ${
+                        p.locked ? 'opacity-70' : ''
+                      }`}
                     >
-                      {t(ui.enterPortal)}
-                      <ArrowIcon className="w-4 h-4" />
+                      {p.locked ? <Lock className="w-4 h-4" /> : null}
+                      {p.locked ? t({ en: 'Coming Soon', ar: 'قريباً' }) : t(ui.enterPortal)}
+                      {!p.locked && <ArrowIcon className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>

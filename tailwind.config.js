@@ -9,17 +9,14 @@ export default {
       colors: {
         // Brand
         saqr: {
-          gold:   '#C5A028',
-          navy:   '#1B2F5B',
+          gold:         '#C5A028',
+          navy:         '#1B2F5B',
           'navy-light': '#2A4480',
         },
         // Portal accents
         commercial: '#1B4F72',
-        cd: {
-          DEFAULT: '#991B1B',
-          light:   '#FEF2F2',
-        },
-        insurance: '#0F1F3D',
+        cd: { DEFAULT: '#991B1B', light: '#FEF2F2' },
+        insurance:  '#0F1F3D',
         // Risk bands
         risk: {
           low:      '#16A34A',

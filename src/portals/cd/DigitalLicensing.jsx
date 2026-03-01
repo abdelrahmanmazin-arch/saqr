@@ -1,113 +1,184 @@
 import { useState } from 'react'
 import { cdLicenses, licenseApplications } from '../../data/cdData'
 import StatusBadge from '../../components/StatusBadge'
-import { FileCheck, Clock, AlertTriangle, CheckCircle2, ChevronRight } from 'lucide-react'
+import RiskBadge from '../../components/RiskBadge'
+import { FileCheck, X, CheckCircle2, Upload, MessageSquare } from 'lucide-react'
 
-const STATUS_RING = {
-  active:     'border-green-400 bg-green-50 text-green-900',
-  expiring:   'border-amber-400 bg-amber-50 text-amber-900',
-  expired:    'border-red-500 bg-red-50 text-red-900',
-  'sla-breach': 'border-red-900 bg-red-950 text-white',
+const APP_STAGES = [
+  { id: 'doc-review',       label: { en: 'Document Review',  ar: 'مراجعة الوثائق'   } },
+  { id: 'site-inspection',  label: { en: 'Site Inspection',  ar: 'الفحص الموقعي'   } },
+  { id: 'compliance-check', label: { en: 'Compliance Check', ar: 'فحص الامتثال'    } },
+  { id: 'final-approval',   label: { en: 'Final Approval',   ar: 'الموافقة النهائية' } },
+  { id: 'license-issued',   label: { en: 'License Issued',   ar: 'صدر الترخيص'     } },
+]
+
+const STAGE_DETAILS = {
+  'doc-review': {
+    officer: 'Sara Al-Zahrani', dueDate: '2025-01-15', status: 'complete',
+    docs: [
+      { name: { en: 'Trade License', ar: 'الرخصة التجارية' }, uploaded: true },
+      { name: { en: 'Building Permit', ar: 'تصريح البناء' }, uploaded: true },
+    ],
+    comments: [{ by: 'Sara', msg: { en: 'All documents verified. Proceeding to site inspection.', ar: 'تم التحقق من جميع الوثائق.' }, time: '2025-01-14 09:12' }],
+  },
+  'site-inspection': {
+    officer: 'Mohammed Al-Harbi', dueDate: '2025-01-25', status: 'in-progress',
+    docs: [
+      { name: { en: 'Site Photos (all floors)', ar: 'صور الموقع' }, uploaded: false },
+      { name: { en: 'Fire System Report', ar: 'تقرير نظام الإطفاء' }, uploaded: true },
+    ],
+    comments: [{ by: 'Mohammed', msg: { en: 'Scheduled for 2025-01-22. Inspector: Ahmed Siddiqui.', ar: 'مقرر 2025-01-22. المفتش: أحمد صديقي.' }, time: '2025-01-16 14:30' }],
+  },
+  'compliance-check': { officer: 'Fatima Al-Otaibi', dueDate: '2025-02-05', status: 'pending', docs: [], comments: [] },
+  'final-approval':   { officer: 'Director Khalid',  dueDate: '2025-02-15', status: 'pending', docs: [], comments: [] },
+  'license-issued':   { officer: 'System',           dueDate: '—',          status: 'pending', docs: [], comments: [] },
 }
 
-const STAGE_STATUS = {
-  complete: 'bg-green-500 text-white',
-  active:   'bg-[#2563EB] text-white animate-pulse',
-  pending:  'bg-gray-200 text-gray-500',
-}
-
-export default function DigitalLicensing({ t, lang }) {
-  const isRTL = lang === 'ar'
-  const [licenses, setLicenses] = useState(cdLicenses)
-  const [applications, setApplications] = useState(licenseApplications)
-  const [simExpiry, setSimExpiry] = useState(false)
-  const [tab, setTab] = useState('registry') // 'registry' | 'applications'
-
-  // Summary counts
-  const counts = {
-    active:     licenses.filter(l => l.status === 'active').length,
-    expiring:   licenses.filter(l => l.status === 'expiring').length,
-    expired:    licenses.filter(l => l.status === 'expired').length,
-    'sla-breach': licenses.filter(l => l.status === 'sla-breach').length,
-  }
-
-  // Simulate license expiry for Kingdom Centre
-  const triggerExpiry = () => {
-    setSimExpiry(true)
-    setLicenses(prev => prev.map(l =>
-      l.id === 'LIC-0019'
-        ? { ...l, status: 'expired', daysLeft: 0 }
-        : l
-    ))
-  }
-
-  const getAction = (lic) => {
-    if (lic.status === 'expired' || lic.status === 'sla-breach') return {
-      label: { en: 'Enforce', ar: 'تطبيق' },
-      cls: 'bg-red-100 text-red-800 hover:bg-red-200',
-    }
-    if (lic.status === 'expiring') return {
-      label: { en: 'Schedule Renewal', ar: 'جدولة التجديد' },
-      cls: 'bg-amber-100 text-amber-800 hover:bg-amber-200',
-    }
-    return { label: { en: 'View', ar: 'عرض' }, cls: 'bg-gray-100 text-gray-700 hover:bg-gray-200' }
-  }
+function ApplicationCard({ app, t, lang, addToast }) {
+  const [selectedStage, setSelectedStage] = useState(null)
+  const currentIdx = APP_STAGES.findIndex(s => s.id === (app.currentStage ?? 'site-inspection'))
+  const detail = selectedStage ? STAGE_DETAILS[selectedStage] : null
 
   return (
-    <div className="space-y-5" dir={isRTL ? 'rtl' : 'ltr'}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-xl font-bold text-gray-900">{t({ en: 'Digital Licensing', ar: 'الترخيص الرقمي' })}</h1>
-        <button
-          onClick={simExpiry ? () => { setSimExpiry(false); setLicenses(cdLicenses) } : triggerExpiry}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all shadow-sm ${
-            simExpiry ? 'bg-gray-200 text-gray-700' : 'bg-[#2563EB] text-white hover:bg-blue-700'
-          }`}
-        >
-          <Clock className="w-4 h-4" />
-          {t(simExpiry ? { en: 'Reset Expiry Simulation', ar: 'إعادة تعيين المحاكاة' } : { en: 'Simulate License Expiry', ar: 'محاكاة انتهاء الترخيص' })}
-        </button>
+    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-2">
+        <div>
+          <div className="font-bold text-gray-900">{t(app.buildingName ?? { en: app.id, ar: app.id })}</div>
+          <div className="text-xs text-gray-400 mt-0.5">{app.id} · SBC {app.sbcType}</div>
+        </div>
+        <span className="px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold">
+          {t({ en: 'Pending', ar: 'معلق' })}
+        </span>
       </div>
 
-      {/* Simulation result */}
-      {simExpiry && (
-        <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-300 rounded-xl">
-          <AlertTriangle className="w-5 h-5 text-red-700 flex-shrink-0 mt-0.5" />
-          <div>
-            <div className="font-semibold text-red-900 text-sm">{t({ en: 'License Expiry Cascade — Granada Mall', ar: 'تسلسل انتهاء الترخيص — غرناطة مول' })}</div>
-            <div className="text-xs text-red-700 mt-1 space-y-0.5">
-              <div>⚠ {t({ en: 'Risk score penalty applied: +22 points', ar: 'غرامة درجة المخاطر مُطبَّقة: +22 نقطة' })}</div>
-              <div>📱 {t({ en: 'Owner notified via Saqr app — critical alert', ar: 'تم إخطار المالك عبر صقر — تنبيه حرج' })}</div>
-              <div>📋 {t({ en: 'License added to priority inspection queue (Rank #1)', ar: 'الترخيص أُضيف لقائمة الفحوصات الأولوية (رتبة #1)' })}</div>
-              <div>🔒 {t({ en: 'Insurance portal flagged — underwriter alerted for premium reassessment', ar: 'بوابة التأمين محدّثة — تنبيه المكتتب لإعادة تقييم القسط' })}</div>
+      {/* Stage tracker */}
+      <div className="px-5 py-4 border-b border-gray-50">
+        <div className="flex items-center">
+          {APP_STAGES.map((stage, i) => {
+            const isDone = i < currentIdx, isCur = i === currentIdx
+            return (
+              <div key={stage.id} className="flex items-center flex-1">
+                <div className="flex flex-col items-center w-full cursor-pointer group"
+                  onClick={() => setSelectedStage(selectedStage === stage.id ? null : stage.id)}>
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-all group-hover:scale-110 ${
+                    isDone ? 'bg-green-500 border-green-500 text-white' :
+                    isCur  ? 'bg-[#0891B2] border-[#0891B2] text-white ring-4 ring-blue-100' :
+                             'bg-white border-gray-200 text-gray-400'
+                  } ${selectedStage === stage.id ? 'ring-2 ring-offset-1 ring-current' : ''}`}>
+                    {isDone ? <CheckCircle2 className="w-4 h-4" /> : i + 1}
+                  </div>
+                  <div className={`text-[9px] mt-1 text-center leading-tight font-medium px-1 ${isCur ? 'text-blue-600' : isDone ? 'text-green-600' : 'text-gray-400'}`}>
+                    {t(stage.label)}
+                  </div>
+                </div>
+                {i < APP_STAGES.length - 1 && <div className={`h-0.5 flex-1 -mt-3 mx-0.5 ${isDone ? 'bg-green-400' : 'bg-gray-100'}`} />}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Stage detail panel */}
+      {selectedStage && detail && (
+        <div className="bg-gray-50 border-t border-gray-100 px-5 py-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="font-semibold text-gray-800 text-sm">{t(APP_STAGES.find(s => s.id === selectedStage)?.label ?? { en: '', ar: '' })}</div>
+            <button onClick={() => setSelectedStage(null)} className="text-gray-400 hover:text-gray-600"><X className="w-4 h-4" /></button>
+          </div>
+          <div className="grid grid-cols-3 gap-3 text-xs">
+            {[['Officer', detail.officer], ['Due', detail.dueDate], ['Status', detail.status]].map(([k, v]) => (
+              <div key={k}><div className="text-gray-400 mb-0.5">{k}</div><div className="font-semibold text-gray-800">{v}</div></div>
+            ))}
+          </div>
+          {detail.docs.length > 0 && (
+            <div className="space-y-1.5">
+              <div className="text-xs font-semibold text-gray-500">{t({ en: 'Documents', ar: 'الوثائق' })}</div>
+              {detail.docs.map((doc, i) => (
+                <div key={i} className={`flex items-center justify-between p-2 rounded-lg ${doc.uploaded ? 'bg-green-50 border border-green-100' : 'bg-white border border-dashed border-gray-200'}`}>
+                  <span className="text-xs text-gray-700">{t(doc.name)}</span>
+                  {doc.uploaded
+                    ? <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    : <label className="flex items-center gap-1 text-[10px] text-blue-600 font-semibold cursor-pointer">
+                        <Upload className="w-3 h-3" />{t({ en: 'Upload', ar: 'رفع' })}
+                        <input type="file" className="hidden" onChange={() => addToast(t({ en: 'Document uploaded', ar: 'تم رفع الوثيقة' }), 'success')} />
+                      </label>
+                  }
+                </div>
+              ))}
             </div>
+          )}
+          {detail.comments.length > 0 && (
+            <div>
+              <div className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1">
+                <MessageSquare className="w-3 h-3" />{t({ en: 'Comments', ar: 'التعليقات' })}
+              </div>
+              {detail.comments.map((c, i) => (
+                <div key={i} className="bg-white border border-gray-100 rounded-lg p-2.5 text-xs">
+                  <div className="text-gray-400 mb-0.5">{c.by} · {c.time}</div>
+                  <div className="text-gray-800">{t(c.msg)}</div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="flex gap-2">
+            <button onClick={() => addToast(t({ en: 'Stage approved', ar: 'تمت الموافقة' }), 'success')}
+              className="flex-1 py-2 rounded-xl bg-green-600 text-white text-xs font-bold hover:bg-green-700">
+              {t({ en: 'Approve', ar: 'موافقة' })}
+            </button>
+            <button onClick={() => addToast(t({ en: 'Rejection recorded', ar: 'تم الرفض' }), 'error')}
+              className="flex-1 py-2 rounded-xl bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100">
+              {t({ en: 'Reject', ar: 'رفض' })}
+            </button>
+            <button onClick={() => addToast(t({ en: 'More info requested', ar: 'طُلبت معلومات إضافية' }), 'info')}
+              className="flex-1 py-2 rounded-xl border border-amber-200 text-amber-700 text-xs font-bold hover:bg-amber-50">
+              {t({ en: 'More Info', ar: 'معلومات' })}
+            </button>
           </div>
         </div>
       )}
+    </div>
+  )
+}
 
-      {/* Summary KPIs */}
+export default function DigitalLicensing({ t, lang, addToast }) {
+  const isRTL = lang === 'ar'
+  const [licenses, setLicenses] = useState(cdLicenses)
+  const [tab, setTab]           = useState('registry')
+
+  const simulateExpiry = (id) => {
+    setLicenses(prev => prev.map(l => l.id === id ? { ...l, status: 'expired', riskScore: Math.min(100, (l.riskScore ?? 50) + 15) } : l))
+    addToast(t({ en: 'License expired — owner notified, risk score penalized', ar: 'انتهى الترخيص — تم إخطار المالك وتطبيق الغرامة' }), 'warning')
+    addToast(t({ en: 'Building added to inspection priority queue', ar: 'أضيف المبنى لأولوية طابور الفحص' }), 'info')
+  }
+
+  const kpis = [
+    { label: { en: 'Active', ar: 'نشط' },         value: licenses.filter(l => l.status === 'active').length,     color: 'text-green-600' },
+    { label: { en: 'Expiring', ar: 'ينتهي' },     value: licenses.filter(l => l.status === 'expiring').length,   color: 'text-amber-600' },
+    { label: { en: 'Expired', ar: 'منتهي' },      value: licenses.filter(l => l.status === 'expired').length,    color: 'text-red-600' },
+    { label: { en: 'SLA Breach', ar: 'خرق SLA' }, value: licenses.filter(l => l.status === 'sla-breach').length, color: 'text-red-900' },
+  ]
+
+  return (
+    <div className="space-y-5" dir={isRTL ? 'rtl' : 'ltr'}>
+      <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+        <FileCheck className="w-5 h-5 text-[#0891B2]" />
+        {t({ en: 'Digital Licensing', ar: 'التراخيص الرقمية' })}
+      </h1>
+
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {Object.entries(counts).map(([st, cnt]) => (
-          <div key={st} className={`kpi-tile border-2 ${STATUS_RING[st] ?? 'border-gray-100'}`}>
-            <span className="text-xs font-medium">
-              {t({ active: { en: 'Active', ar: 'نشط' }, expiring: { en: 'Expiring', ar: 'ينتهي قريباً' }, expired: { en: 'Expired', ar: 'منتهي' }, 'sla-breach': { en: 'SLA Breach', ar: 'خرق SLA' } }[st])}
-            </span>
-            <span className="text-2xl font-bold">{cnt}</span>
+        {kpis.map((k, i) => (
+          <div key={i} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+            <div className="text-xs text-gray-500 mb-1">{t(k.label)}</div>
+            <div className={`text-2xl font-bold font-mono ${k.color}`}>{k.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 p-1 rounded-xl w-fit">
-        {[
-          { id: 'registry', label: { en: 'License Registry', ar: 'سجل التراخيص' } },
-          { id: 'applications', label: { en: 'Applications', ar: 'الطلبات' } },
-        ].map(tab_ => (
-          <button
-            key={tab_.id}
-            onClick={() => setTab(tab_.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === tab_.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-          >
-            {t(tab_.label)}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
+        {[{ id: 'registry', label: { en: 'License Registry', ar: 'سجل التراخيص' } }, { id: 'applications', label: { en: 'Applications', ar: 'الطلبات' } }].map(t_ => (
+          <button key={t_.id} onClick={() => setTab(t_.id)}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === t_.id ? 'bg-white text-[#0891B2] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            {t(t_.label)}
           </button>
         ))}
       </div>
@@ -116,53 +187,57 @@ export default function DigitalLicensing({ t, lang }) {
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b border-gray-100">
-                <tr>
-                  {[
-                    { en: 'Building', ar: 'المبنى' },
-                    { en: 'License Type', ar: 'نوع الترخيص' },
-                    { en: 'Status', ar: 'الحالة' },
-                    { en: 'Expiry', ar: 'تاريخ الانتهاء' },
-                    { en: 'Days', ar: 'الأيام' },
-                    { en: 'Vendor OK', ar: 'المورد' },
-                    { en: 'Officer', ar: 'الضابط' },
-                    { en: 'Action', ar: 'إجراء' },
-                  ].map((h, i) => (
-                    <th key={i} className="px-4 py-3 text-start text-xs font-semibold text-gray-500">{t(h)}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {licenses.map(lic => {
-                  const action = getAction(lic)
-                  return (
-                    <tr key={lic.id} className={`hover:bg-gray-50 transition-colors ${
-                      lic.status === 'sla-breach' ? 'bg-red-950/5' :
-                      lic.status === 'expired'    ? 'bg-red-50' : ''
-                    }`}>
-                      <td className="px-4 py-3 font-medium text-gray-900 text-sm">{t(lic.buildingName)}</td>
-                      <td className="px-4 py-3 text-xs text-gray-500">{t(lic.type)}</td>
-                      <td className="px-4 py-3"><StatusBadge status={lic.status} /></td>
-                      <td className="px-4 py-3 font-mono text-xs text-gray-600">{lic.expiry}</td>
-                      <td className="px-4 py-3">
-                        <span className={`font-bold text-sm ${lic.daysLeft < 0 ? 'text-red-700' : lic.daysLeft < 120 ? 'text-amber-700' : 'text-green-700'}`}>
-                          {lic.daysLeft < 0 ? lic.daysLeft : `+${lic.daysLeft}`}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3">
-                        {lic.vendorOk
-                          ? <CheckCircle2 className="w-4 h-4 text-green-500" />
-                          : <AlertTriangle className="w-4 h-4 text-red-500" />}
-                      </td>
-                      <td className="px-4 py-3 text-xs text-gray-500">{lic.officer}</td>
-                      <td className="px-4 py-3">
-                        <button className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${action.cls}`}>
-                          {t(action.label)}
+              <thead><tr className="bg-gray-50 text-xs text-gray-500">
+                <th className="px-4 py-3 text-start font-medium">{t({ en: 'Building', ar: 'المبنى' })}</th>
+                <th className="px-4 py-3 text-center font-medium">{t({ en: 'Status', ar: 'الحالة' })}</th>
+                <th className="px-4 py-3 text-center font-medium">{t({ en: 'Expiry', ar: 'الانتهاء' })}</th>
+                <th className="px-4 py-3 text-center font-medium">{t({ en: 'Risk', ar: 'المخاطر' })}</th>
+                <th className="px-4 py-3 text-center font-medium">{t({ en: 'Actions', ar: 'الإجراءات' })}</th>
+              </tr></thead>
+              <tbody>
+                {licenses.map(lic => (
+                  <tr key={lic.id} className={`border-t border-gray-50 hover:bg-gray-50 ${lic.status === 'expired' || lic.status === 'sla-breach' ? 'border-l-4 border-red-400' : ''}`}>
+                    <td className="px-4 py-3">
+                      <div className="font-medium text-gray-900">{t(lic.buildingName ?? { en: lic.id, ar: lic.id })}</div>
+                      <div className="text-[10px] text-gray-400">{lic.id}</div>
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                        lic.status === 'active'     ? 'bg-green-100 text-green-700' :
+                        lic.status === 'expiring'   ? 'bg-amber-100 text-amber-700' :
+                        lic.status === 'expired'    ? 'bg-red-100 text-red-700' :
+                        'bg-red-900 text-white'
+                      }`}>{lic.status}</span>
+                    </td>
+                    <td className="px-4 py-3 text-center text-xs font-mono text-gray-600">{lic.expiryDate ?? '—'}</td>
+                    <td className="px-4 py-3 text-center"><RiskBadge score={lic.riskScore ?? 50} showScore size="sm" /></td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                        {lic.status === 'active' && (
+                          <button onClick={() => simulateExpiry(lic.id)}
+                            className="px-2 py-1 rounded-lg bg-amber-100 text-amber-700 text-[10px] font-bold hover:bg-amber-200">
+                            {t({ en: 'Simulate Expiry', ar: 'محاكاة انتهاء' })}
+                          </button>
+                        )}
+                        {(lic.status === 'expired' || lic.status === 'sla-breach') && (
+                          <button onClick={() => addToast(t({ en: 'Enforcement scheduled', ar: 'جدولة التطبيق' }), 'warning')}
+                            className="px-2 py-1 rounded-lg bg-red-100 text-red-700 text-[10px] font-bold hover:bg-red-200">
+                            {t({ en: 'Enforce', ar: 'تطبيق' })}
+                          </button>
+                        )}
+                        {lic.status === 'expiring' && (
+                          <button onClick={() => addToast(t({ en: 'Renewal scheduled', ar: 'جدولة التجديد' }), 'info')}
+                            className="px-2 py-1 rounded-lg bg-blue-100 text-blue-700 text-[10px] font-bold hover:bg-blue-200">
+                            {t({ en: 'Schedule Renewal', ar: 'جدولة تجديد' })}
+                          </button>
+                        )}
+                        <button className="px-2 py-1 rounded-lg border border-gray-200 text-gray-500 text-[10px] font-bold hover:bg-gray-50">
+                          {t({ en: 'View', ar: 'عرض' })}
                         </button>
-                      </td>
-                    </tr>
-                  )
-                })}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -171,41 +246,8 @@ export default function DigitalLicensing({ t, lang }) {
 
       {tab === 'applications' && (
         <div className="space-y-4">
-          {applications.map(app => (
-            <div key={app.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div>
-                  <h3 className="font-semibold text-gray-900">{t(app.buildingName)}</h3>
-                  <p className="text-xs text-gray-400">SBC {app.sbcType} · {t({ en: 'Submitted', ar: 'تاريخ التقديم' })}: {app.submittedDate} · {app.officer}</p>
-                </div>
-              </div>
-
-              {/* Stage flow */}
-              <div className="flex items-center gap-0 overflow-x-auto pb-1">
-                {app.stages.map((st, i) => (
-                  <div key={st.id} className="flex items-center">
-                    <div className="flex flex-col items-center min-w-[90px]">
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${STAGE_STATUS[st.status]}`}>
-                        {st.status === 'complete' ? '✓' : i + 1}
-                      </div>
-                      <div className="text-[10px] text-center text-gray-500 mt-1 leading-tight">{t(st.label)}</div>
-                    </div>
-                    {i < app.stages.length - 1 && (
-                      <div className={`h-0.5 w-6 flex-shrink-0 ${st.status === 'complete' ? 'bg-green-400' : 'bg-gray-200'}`} />
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex gap-2 mt-4">
-                <button className="px-3 py-1.5 bg-[#2563EB] text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors">
-                  {t({ en: 'Approve Stage', ar: 'الموافقة على المرحلة' })}
-                </button>
-                <button className="px-3 py-1.5 border border-gray-200 text-gray-700 text-xs rounded-lg hover:bg-gray-50">
-                  {t({ en: 'Request Info', ar: 'طلب معلومات' })}
-                </button>
-              </div>
-            </div>
+          {licenseApplications.map(app => (
+            <ApplicationCard key={app.id} app={app} t={t} lang={lang} addToast={addToast} />
           ))}
         </div>
       )}
