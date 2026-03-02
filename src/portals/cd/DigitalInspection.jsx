@@ -50,7 +50,7 @@ function InspectionWizard({ item, onClose, addToast, t, lang }) {
   const [showEnforcement, setShowEnforcement] = useState(null)
   const [savingDraft, setSavingDraft] = useState(false)
 
-  const checklist = getChecklistForSBC(item.sbcType)
+  const checklist = getChecklistForSBC(item.sbcType).checkpoints
   const sensors   = buildSensors(item.buildingId)
   const noSignal  = sensors.filter(s => s.signal === 'none')
 
@@ -515,7 +515,7 @@ export default function DigitalInspection({ t, lang, addToast }) {
                 return (
                   <tr key={av.id} className="border-t border-gray-50 hover:bg-gray-50">
                     <td className="px-4 py-3"><div className="font-medium text-gray-900 text-xs">{t(av.buildingName)}</div><div className="text-[10px] text-gray-400">{av.id}</div></td>
-                    <td className="px-4 py-3"><div className="text-xs text-gray-700">{t(av.violationType)}</div></td>
+                    <td className="px-4 py-3"><div className="text-xs text-gray-700">{t(av.type)}</div></td>
                     <td className="px-3 py-3 text-center">
                       <div className="flex items-center gap-1 justify-center">
                         <div className="w-12 h-1.5 bg-gray-100 rounded-full overflow-hidden">

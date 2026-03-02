@@ -154,7 +154,7 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
   const confirmPublish = () => {
     const { lessonId, visibility } = publishTarget
     const next = visibility === 'internal' ? 'public' : 'internal'
-    setLessons(prev => prev.map(l => l.id === lessonId ? { ...l, visibility: next } : l))
+    setLessons(prev => prev.map(l => l.id === lessonId ? { ...l, published: next } : l))
     setPublishTarget(null)
     addToast(t({ en: `Lesson visibility changed to ${next}`, ar: `تم تغيير ظهور الدرس إلى ${next === 'public' ? 'عام' : 'داخلي'}` }), 'success')
   }
@@ -163,7 +163,7 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
     { label: { en: 'Active Campaigns', ar: 'الحملات النشطة' }, value: campaigns.filter(c => c.status === 'active').length, color: 'text-green-600' },
     { label: { en: 'Total Reach', ar: 'إجمالي الوصول' },       value: campaigns.reduce((s, c) => s + (c.reach ?? 0), 0).toLocaleString(), color: 'text-blue-600' },
     { label: { en: 'Lessons Learned', ar: 'الدروس المستفادة' }, value: lessons.length,         color: 'text-purple-600' },
-    { label: { en: 'Content Assets', ar: 'الأصول المحتوية' },  value: Object.values(contentLibrary).reduce((s, n) => s + n, 0), color: 'text-gray-900' },
+    { label: { en: 'Content Assets', ar: 'الأصول المحتوية' },  value: contentLibrary.reduce((s, item) => s + item.count, 0), color: 'text-gray-900' },
   ]
 
   return (
@@ -220,7 +220,7 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
         <div className="divide-y divide-gray-50">
           {lessons.map(lesson => {
             const isExp = expanded === lesson.id
-            const vis = lesson.visibility ?? 'internal'
+            const vis = lesson.published ?? 'internal'
             return (
               <div key={lesson.id}>
                 {/* Row header */}
@@ -240,15 +240,15 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
                 {isExp && (
                   <div className="px-5 pb-5 space-y-4 bg-gray-50 border-t border-gray-100">
                     {/* 5-Whys */}
-                    {lesson.fiveWhys && (
+                    {lesson.whys && (
                       <div>
                         <div className="font-semibold text-gray-700 text-sm mt-4 mb-3 flex items-center gap-2">
                           <BarChart3 className="w-4 h-4 text-purple-500" />
                           {t({ en: '5-Whys Analysis', ar: 'تحليل الـ5 لماذا' })}
                         </div>
                         <div className="space-y-2">
-                          {lesson.fiveWhys.map((why, i) => {
-                            const isRoot = i === lesson.fiveWhys.length - 1
+                          {lesson.whys.map((why, i) => {
+                            const isRoot = i === lesson.whys.length - 1
                             return (
                               <div key={i} className={`flex gap-2 ${isRoot ? '' : ''}`}>
                                 <div className="flex flex-col items-center flex-shrink-0">
@@ -272,27 +272,23 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
                     )}
 
                     {/* Corrective actions */}
-                    {lesson.correctiveActions && (
+                    {lesson.correctiveAction && (
                       <div>
                         <div className="font-semibold text-gray-700 text-sm mb-2">{t({ en: 'Corrective Actions', ar: 'الإجراءات التصحيحية' })}</div>
-                        <div className="space-y-1.5">
-                          {lesson.correctiveActions.map((action, i) => (
-                            <label key={i} className="flex items-start gap-2 cursor-pointer group">
-                              <input type="checkbox" className="mt-0.5 accent-green-600 flex-shrink-0" />
-                              <span className="text-xs text-gray-700 group-hover:text-gray-900 transition-colors">{t(action)}</span>
-                            </label>
-                          ))}
-                        </div>
+                        <label className="flex items-start gap-2 cursor-pointer group">
+                          <input type="checkbox" className="mt-0.5 accent-green-600 flex-shrink-0" />
+                          <span className="text-xs text-gray-700 group-hover:text-gray-900 transition-colors">{t(lesson.correctiveAction)}</span>
+                        </label>
                       </div>
                     )}
 
                     {/* Policy link */}
-                    {lesson.policyRuleDraft && (
+                    {lesson.policyUpdateTriggered && (
                       <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 flex items-start gap-2 text-xs">
                         <FileCheck className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
                         <div>
                           <div className="font-semibold text-blue-700">{t({ en: 'Policy Update Triggered', ar: 'تم تفعيل تحديث السياسة' })}</div>
-                          <div className="text-blue-600">{t(lesson.policyRuleDraft)}</div>
+                          <div className="text-blue-600">{t(lesson.correctiveAction)}</div>
                         </div>
                       </div>
                     )}
@@ -322,13 +318,13 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
           <h2 className="font-bold text-gray-900">{t({ en: 'Content Library', ar: 'مكتبة المحتوى' })}</h2>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-0 divide-x divide-y divide-gray-50">
-          {Object.entries(contentLibrary).map(([type, count]) => {
-            const Icon = CONTENT_ICONS[type] ?? Library
+          {contentLibrary.map(item => {
+            const Icon = CONTENT_ICONS[item.type] ?? Library
             return (
-              <div key={type} className="p-4 text-center hover:bg-gray-50 transition-colors cursor-pointer">
+              <div key={item.type} className="p-4 text-center hover:bg-gray-50 transition-colors cursor-pointer">
                 <Icon className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                <div className="text-xl font-bold font-mono text-gray-900">{count}</div>
-                <div className="text-[10px] text-gray-400 capitalize mt-0.5">{type.replace(/-/g, ' ')}</div>
+                <div className="text-xl font-bold font-mono text-gray-900">{item.count}</div>
+                <div className="text-[10px] text-gray-400 capitalize mt-0.5">{t(item.label)}</div>
               </div>
             )
           })}

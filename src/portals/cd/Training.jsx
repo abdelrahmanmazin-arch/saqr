@@ -151,7 +151,7 @@ function ProgramDetail({ program, onClose, addToast, t, lang }) {
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${MODALITY[program.modality]?.cls ?? 'bg-gray-100 text-gray-700'}`}>
                 {program.modality}
               </span>
-              <span className="text-xs text-gray-400">{program.duration} · {t({ en: 'Cert valid', ar: 'صلاحية الشهادة' })}: {program.certValidity}</span>
+              <span className="text-xs text-gray-400">{program.duration} · {t({ en: 'Cert valid', ar: 'صلاحية الشهادة' })}: {t(program.certValidity)}</span>
             </div>
           </div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X className="w-4 h-4" /></button>
@@ -274,7 +274,7 @@ export default function Training({ t, lang, addToast }) {
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div>
                   <div className="font-bold text-gray-900 text-sm leading-tight">{t(prog.name)}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{prog.duration} · Cert: {prog.certValidity}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{prog.duration} · Cert: {t(prog.certValidity)}</div>
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold flex-shrink-0 ${mod?.cls ?? 'bg-gray-100 text-gray-700'}`}>
                   {prog.modality}
@@ -300,13 +300,13 @@ export default function Training({ t, lang, addToast }) {
         </div>
         <div className="divide-y divide-gray-50">
           {leaderboard.map((team, i) => (
-            <div key={team.teamName ?? team.id ?? i} className="px-5 py-3 flex items-center gap-4">
+            <div key={team.rank ?? i} className="px-5 py-3 flex items-center gap-4">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${RANK_STYLES[i] ?? 'bg-gray-100 text-gray-700'}`}>
                 {i + 1}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-gray-900 text-sm truncate">{t(team.teamName ?? { en: team.name, ar: team.name })}</div>
-                <div className="text-xs text-gray-400">{team.members} {t({ en: 'members', ar: 'عضو' })} · {t({ en: 'Station', ar: 'محطة' })}: {t(team.station ?? { en: 'HQ', ar: 'المقر' })}</div>
+                <div className="font-semibold text-gray-900 text-sm truncate">{t(team.team)}</div>
+                <div className="text-xs text-gray-400">{team.drills} {t({ en: 'drills', ar: 'تدريبات' })} · {t({ en: 'trend', ar: 'الاتجاه' })}: {team.improvement}</div>
               </div>
               <div className="text-right flex-shrink-0">
                 <div className="font-bold font-mono text-gray-900 text-lg">{team.score}</div>
