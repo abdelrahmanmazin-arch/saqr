@@ -13,13 +13,12 @@ import {
   ArrowDownRight, Minus, X, Info
 } from 'lucide-react'
 
-const SECTIONS = ['dashboard', 'buildings', 'alerts', 'marketplace', 'reports']
-
 export default function CommercialPortal() {
   const { lang, t, buildings, incidents, products, simulateRiskEvent, resetRiskEvent, simulatingEvent, riskEventActive } = useApp()
   const [section, setSection] = useState('dashboard')
   const [selectedBuilding, setSelectedBuilding] = useState(null)
   const [searchQ, setSearchQ] = useState('')
+  const [viewMode, setViewMode] = useState('grid') // 'grid' | 'map'
   const isRTL = lang === 'ar'
 
   const totalAlerts = buildings.reduce((s, b) => s + b.activeAlerts, 0)
@@ -29,7 +28,15 @@ export default function CommercialPortal() {
   }).length
   const avgRisk = Math.round(buildings.reduce((s, b) => s + b.riskScore, 0) / buildings.length)
 
-  const filteredBuildings = buildings.filter(b =>
+  const criticalOrImmediate = buildings.filter(b => {
+    // Treat very high scores, SLA-active, or expired licenses as requiring immediate action
+    const isCriticalScore = b.riskScore >= 85
+    const hasSlaBreach = b.status === 'sla-active'
+    const isExpired = b.licenseStatus === 'expired' || b.status === 'license-expired'
+    return isCriticalScore || hasSlaBreach || isExpired
+  }).length
+
+const filteredBuildings = buildings.filter(b =>
     t(b.name).toLowerCase().includes(searchQ.toLowerCase()) ||
     b.sbcType.toLowerCase().includes(searchQ.toLowerCase())
   )
@@ -43,11 +50,11 @@ export default function CommercialPortal() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen bg-[#0A0E1A] flex flex-col text-[#F9FAFB]" dir={isRTL ? 'rtl' : 'ltr'}>
       <Header onNavClick={setSection} activeSection={section} />
 
       {/* Mobile nav */}
-      <nav className="lg:hidden bg-white border-b border-gray-100 overflow-x-auto">
+      <nav className="lg:hidden bg-[#111827] border-b border-[#2D3748] overflow-x-auto">
         <div className="flex">
           {navItems.map(item => {
             const Icon = item.icon
@@ -57,8 +64,8 @@ export default function CommercialPortal() {
                 onClick={() => setSection(item.id)}
                 className={`flex-shrink-0 flex flex-col items-center gap-1 px-4 py-2 text-xs font-medium transition-colors ${
                   section === item.id
-                    ? 'text-[#1B4F72] border-b-2 border-[#1B4F72]'
-                    : 'text-gray-500'
+                    ? 'text-[#C9A84C] border-b-2 border-[#C9A84C]'
+                    : 'text-[#9CA3AF]'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -71,12 +78,17 @@ export default function CommercialPortal() {
 
       {/* Simulate risk event banner */}
       {riskEventActive && (
-        <div className="bg-red-900 text-white px-4 py-2 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <AlertTriangle className="w-4 h-4 flex-shrink-0 animate-pulse" />
-            <span className="font-medium">{t({ en: 'CRITICAL ALERT: Al Jubail Industrial — Sprinkler pressure drop detected. Risk score: 96/100. SLA: 4 hours', ar: 'تنبيه حرج: الجبيل الصناعية — انخفاض ضغط الرشاشات. درجة المخاطر: 96/100. SLA: 4 ساعات' })}</span>
+        <div className="bg-[#111827] border-b border-[#7F1D1D] px-4 py-2 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-sm text-[#F9FAFB]">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0 text-[#F97373] animate-pulse" />
+            <span className="font-medium">
+              {t({
+                en: 'CRITICAL ALERT: Al Jubail Industrial — Sprinkler pressure drop detected. Risk score: 96/100. SLA: 4 hours',
+                ar: 'تنبيه حرج: منشأة الجبيل الصناعية — انخفاض ضغط نظام الرشاشات. درجة المخاطر: 96/100. مهلة SLA: 4 ساعات',
+              })}
+            </span>
           </div>
-          <button onClick={resetRiskEvent} className="flex-shrink-0 text-white/70 hover:text-white">
+          <button onClick={resetRiskEvent} className="flex-shrink-0 text-[#9CA3AF] hover:text-[#F9FAFB]">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -86,53 +98,82 @@ export default function CommercialPortal() {
         {/* ─── Dashboard ─────────────────────────── */}
         {section === 'dashboard' && (
           <div className="space-y-6">
-            {/* Page title + simulate */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">{t(ui.dashboard)}</h1>
-                <p className="text-gray-500 text-sm">{t({ en: 'Good morning — your portfolio at a glance', ar: 'صباح الخير — لمحة عن محفظتك العقارية' })}</p>
+            {/* Risk posture banner — control room style */}
+            <div className="bg-[#111827] border border-[#2D3748] rounded-2xl px-5 py-4 flex flex-wrap items-start justify-between gap-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-[#9CA3AF]">
+                  <span className="h-3 w-1.5 bg-[#C9A84C] rounded-sm" />
+                  <span>{t({ en: 'Portfolio Risk Posture', ar: 'مستوى مخاطر المحفظة' })}</span>
+                </div>
+                <div className="flex items-baseline gap-3">
+                  <div className="text-4xl font-mono font-semibold text-[#C9A84C]">
+                    {avgRisk}
+                    <span className="text-sm text-[#9CA3AF] ml-1">/100</span>
+                  </div>
+                  <div className="text-sm text-[#9CA3AF]">
+                    {criticalOrImmediate > 0
+                      ? t({
+                          en: `Risk Level Elevated — ${criticalOrImmediate} facilities require immediate action.`,
+                          ar: `مستوى المخاطر مرتفع — ${criticalOrImmediate} منشآت تحتاج إجراءً فورياً.`,
+                        })
+                      : t({
+                          en: 'Risk Level Stable — All facilities within acceptable thresholds.',
+                          ar: 'مستوى المخاطر مستقر — جميع المنشآت ضمن الحدود المقبولة.',
+                        })}
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={riskEventActive ? resetRiskEvent : simulateRiskEvent}
-                disabled={simulatingEvent}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                  riskEventActive
-                    ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    : 'bg-[#1B4F72] text-white hover:bg-[#164060]'
-                } ${simulatingEvent ? 'opacity-60 cursor-wait' : ''}`}
-              >
-                {simulatingEvent ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-                {t(riskEventActive
-                  ? { en: 'Reset Risk Event', ar: 'إعادة تعيين الحدث' }
-                  : { en: 'Simulate Risk Event', ar: 'محاكاة حدث مخاطر' }
-                )}
-              </button>
+              <div className="flex flex-col items-end gap-2">
+                <button
+                  onClick={riskEventActive ? resetRiskEvent : simulateRiskEvent}
+                  disabled={simulatingEvent}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium border border-[#C9A84C]/60 ${
+                    riskEventActive
+                      ? 'text-[#C9A84C] bg-transparent hover:bg-[#1F2937]'
+                      : 'text-[#0A0E1A] bg-[#C9A84C] hover:bg-[#B18E3D]'
+                  } ${simulatingEvent ? 'opacity-60 cursor-wait' : ''}`}
+                >
+                  {simulatingEvent ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+                  {t(
+                    riskEventActive
+                      ? { en: 'Reset Risk Simulation', ar: 'إعادة تعيين المحاكاة' }
+                      : { en: 'Simulate Risk Change', ar: 'محاكاة تغيير المخاطر' }
+                  )}
+                </button>
+                <p className="text-[11px] text-[#6B7280] max-w-xs text-right">
+                  {t({
+                    en: 'Demo mode: simulates a sprinkler pressure drop event on Al Jubail Industrial Facility.',
+                    ar: 'وضع العرض: يحاكي حدث انخفاض ضغط نظام الإطفاء في منشأة الجبيل الصناعية.',
+                  })}
+                </p>
+              </div>
             </div>
 
             {/* KPI tiles */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: { en: 'Total Buildings', ar: 'إجمالي المباني' }, value: buildings.length, icon: Building2, color: 'text-[#1B4F72]', bg: 'bg-blue-50' },
-                { label: { en: 'Active Alerts', ar: 'التنبيهات النشطة' }, value: totalAlerts, icon: Bell, color: 'text-red-600', bg: 'bg-red-50', urgent: totalAlerts > 5 },
-                { label: { en: 'Licenses Expiring (90d)', ar: 'تراخيص تنتهي (90 يوم)' }, value: expiringSoon, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
-                { label: { en: 'Portfolio Risk Avg', ar: 'متوسط مخاطر المحفظة' }, value: avgRisk, icon: TrendingUp, color: 'text-[#1B4F72]', bg: 'bg-blue-50', isScore: true },
+                { label: { en: 'Total Buildings', ar: 'إجمالي المباني' }, value: buildings.length, icon: Building2 },
+                { label: { en: 'Active Alerts', ar: 'التنبيهات النشطة' }, value: totalAlerts, icon: Bell },
+                { label: { en: 'Licenses Expiring (90d)', ar: 'تراخيص تنتهي (90 يوم)' }, value: expiringSoon, icon: Clock },
+                { label: { en: 'Portfolio Risk Avg', ar: 'متوسط مخاطر المحفظة' }, value: avgRisk, icon: TrendingUp, isScore: true },
               ].map((kpi, i) => {
                 const Icon = kpi.icon
                 return (
-                  <div key={i} className={`kpi-tile ${kpi.urgent ? 'border-red-300 bg-red-50' : ''}`}>
+                  <div
+                    key={i}
+                    className="kpi-tile bg-[#111827] border-[#2D3748] rounded-xl flex flex-col gap-1"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-gray-500">{t(kpi.label)}</span>
-                      <div className={`w-8 h-8 rounded-lg ${kpi.bg} flex items-center justify-center`}>
-                        <Icon className={`w-4 h-4 ${kpi.color}`} />
+                      <span className="text-xs font-medium text-[#9CA3AF]">{t(kpi.label)}</span>
+                      <div className="w-8 h-8 rounded-lg bg-[#1F2937] flex items-center justify-center border border-[#2D3748]">
+                        <Icon className="w-4 h-4 text-[#C9A84C]" />
                       </div>
                     </div>
                     <div className="flex items-end gap-2">
                       {kpi.isScore ? (
                         <RiskBadge score={kpi.value} size="lg" />
                       ) : (
-                        <span className={`text-2xl font-bold ${kpi.urgent ? 'text-red-700' : 'text-gray-900'}`}>
-                          {kpi.value}
-                        </span>
+                        <span className="text-2xl font-mono font-semibold text-[#F9FAFB]">{kpi.value}</span>
                       )}
                     </div>
                   </div>
@@ -140,41 +181,83 @@ export default function CommercialPortal() {
               })}
             </div>
 
-            {/* Building cards */}
+            {/* Building cards + map toggle */}
             <div>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold text-gray-900">{t({ en: 'Building Portfolio', ar: 'محفظة المباني' })}</h2>
-                <button onClick={() => setSection('buildings')} className="text-[#1B4F72] text-sm font-medium flex items-center gap-1 hover:underline">
+                <div className="flex items-center gap-3">
+                  <h2 className="font-semibold text-[#F9FAFB]">
+                    {t({ en: 'Building Portfolio', ar: 'محفظة المباني' })}
+                  </h2>
+                  <div className="inline-flex items-center rounded-full border border-[#2D3748] bg-[#111827] text-xs">
+                    {['grid', 'map'].map(mode => (
+                      <button
+                        key={mode}
+                        onClick={() => setViewMode(mode)}
+                        className={`px-3 py-1 rounded-full ${
+                          viewMode === mode ? 'bg-[#1F2937] text-[#C9A84C]' : 'text-[#9CA3AF]'
+                        }`}
+                      >
+                        {mode === 'grid'
+                          ? t({ en: 'Grid View', ar: 'عرض الشبكة' })
+                          : t({ en: 'Map View', ar: 'عرض الخريطة' })}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setSection('buildings')}
+                  className="text-[#C9A84C] text-sm font-medium flex items-center gap-1 hover:underline"
+                >
                   {t({ en: 'View all', ar: 'عرض الكل' })}
                   {isRTL ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                {buildings.slice(0, 6).map(b => (
-                  <BuildingCard key={b.id} building={b} onSelect={() => { setSelectedBuilding(b); setSection('buildings') }} lang={lang} t={t} />
-                ))}
-              </div>
+              {viewMode === 'grid' ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {buildings.slice(0, 6).map(b => (
+                    <BuildingCard
+                      key={b.id}
+                      building={b}
+                      onSelect={() => {
+                        setSelectedBuilding(b)
+                        setSection('buildings')
+                      }}
+                      lang={lang}
+                      t={t}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <PortfolioMap buildings={buildings} t={t} lang={lang} onSelectBuilding={b => {
+                  setSelectedBuilding(b)
+                  setSection('buildings')
+                }} />
+              )}
             </div>
 
             {/* Quick actions */}
             <div>
-              <h2 className="font-semibold text-gray-900 mb-3">{t({ en: 'Quick Actions', ar: 'الإجراءات السريعة' })}</h2>
+              <h2 className="font-semibold text-[#F9FAFB] mb-3">
+                {t({ en: 'Quick Actions', ar: 'الإجراءات السريعة' })}
+              </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
-                  { icon: Eye, label: ui.requestInspection, color: 'text-[#1B4F72]', bg: 'bg-blue-50 hover:bg-blue-100' },
-                  { icon: FileBarChart2, label: ui.submitMaintenance, color: 'text-green-700', bg: 'bg-green-50 hover:bg-green-100' },
-                  { icon: ShoppingBag, label: ui.viewMarketplace, color: 'text-purple-700', bg: 'bg-purple-50 hover:bg-purple-100', action: () => setSection('marketplace') },
-                  { icon: Bell, label: ui.contactSupport, color: 'text-amber-700', bg: 'bg-amber-50 hover:bg-amber-100' },
+                  { icon: Eye, label: ui.requestInspection },
+                  { icon: FileBarChart2, label: ui.submitMaintenance },
+                  { icon: ShoppingBag, label: ui.viewMarketplace, action: () => setSection('marketplace') },
+                  { icon: Bell, label: ui.contactSupport },
                 ].map((qa, i) => {
                   const Icon = qa.icon
                   return (
                     <button
                       key={i}
                       onClick={qa.action}
-                      className={`flex flex-col items-center gap-2 p-4 rounded-xl ${qa.bg} transition-colors`}
+                      className="flex flex-col items-center gap-2 p-4 rounded-xl bg-[#111827] border border-[#2D3748] hover:bg-[#1F2937] transition-colors"
                     >
-                      <Icon className={`w-5 h-5 ${qa.color}`} />
-                      <span className={`text-xs font-medium text-center ${qa.color}`}>{t(qa.label)}</span>
+                      <Icon className="w-5 h-5 text-[#C9A84C]" />
+                      <span className="text-xs font-medium text-center text-[#F9FAFB]">
+                        {t(qa.label)}
+                      </span>
                     </button>
                   )
                 })}
@@ -185,24 +268,24 @@ export default function CommercialPortal() {
 
         {/* ─── Buildings list ─────────────────────── */}
         {section === 'buildings' && !selectedBuilding && (
-          <div className="space-y-5">
+        <div className="space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-4">
-              <h1 className="text-xl font-bold text-gray-900">{t(ui.buildings)}</h1>
+              <h1 className="text-xl font-bold text-[#F9FAFB]">{t(ui.buildings)}</h1>
               <div className="relative">
-                <Search className="w-4 h-4 absolute top-2.5 start-3 text-gray-400 pointer-events-none" />
+                <Search className="w-4 h-4 absolute top-2.5 start-3 text-[#6B7280] pointer-events-none" />
                 <input
                   value={searchQ}
                   onChange={e => setSearchQ(e.target.value)}
                   placeholder={t(ui.search)}
-                  className="ps-9 pe-4 py-2 border border-gray-200 rounded-xl text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1B4F72]/30 w-64"
+                  className="ps-9 pe-4 py-2 border border-[#2D3748] rounded-xl text-sm bg-[#111827] text-[#F9FAFB] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/40 w-64"
                 />
               </div>
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+            <div className="bg-[#111827] rounded-xl border border-[#2D3748] overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-[#111827] border-b border-[#2D3748]">
                     <tr>
                       {[
                         { en: 'Building', ar: 'المبنى' },
@@ -213,30 +296,33 @@ export default function CommercialPortal() {
                         { en: 'Sensors', ar: 'المستشعرات' },
                         { en: 'Action', ar: 'الإجراء' },
                       ].map((h, i) => (
-                        <th key={i} className="px-4 py-3 text-start text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                        <th key={i} className="px-4 py-3 text-start text-xs font-semibold text-[#9CA3AF] uppercase tracking-wide">
                           {t(h)}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-[#1F2937]">
                     {filteredBuildings.map(b => (
-                      <tr key={b.id} className="hover:bg-gray-50 transition-colors">
+                      <tr key={b.id} className="hover:bg-[#1F2937] transition-colors">
                         <td className="px-4 py-3">
-                          <div className="font-medium text-gray-900">{t(b.name)}</div>
-                          <div className="text-xs text-gray-400">{t(b.region)}</div>
+                          <div className="font-medium text-[#F9FAFB]">{t(b.name)}</div>
+                          <div className="text-xs text-[#9CA3AF]">{t(b.region)}</div>
                         </td>
                         <td className="px-4 py-3">
-                          <span className="inline-flex px-2 py-0.5 rounded bg-gray-100 text-gray-700 text-xs font-mono">{b.sbcType}</span>
+                          <span className="inline-flex px-2 py-0.5 rounded border border-[#2D3748] text-xs font-mono text-[#F9FAFB]">
+                            {b.sbcType}
+                          </span>
                         </td>
                         <td className="px-4 py-3">
                           <RiskBadge score={b.riskScore} />
                         </td>
                         <td className="px-4 py-3">
-                          {b.activeAlerts > 0
-                            ? <span className="font-semibold text-red-600">{b.activeAlerts}</span>
-                            : <span className="text-gray-400">0</span>
-                          }
+                          {b.activeAlerts > 0 ? (
+                            <span className="font-semibold text-[#F97373]">{b.activeAlerts}</span>
+                          ) : (
+                            <span className="text-[#6B7280]">0</span>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           <StatusBadge status={b.licenseStatus} />
@@ -247,7 +333,7 @@ export default function CommercialPortal() {
                         <td className="px-4 py-3">
                           <button
                             onClick={() => setSelectedBuilding(b)}
-                            className="text-[#1B4F72] font-medium text-xs hover:underline flex items-center gap-1"
+                            className="text-[#C9A84C] font-medium text-xs hover:underline flex items-center gap-1"
                           >
                             {t(ui.viewDetails)}
                             {isRTL ? <ChevronLeft className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
@@ -295,6 +381,75 @@ export default function CommercialPortal() {
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
+function PortfolioMap({ buildings, t, lang, onSelectBuilding }) {
+  const isRTL = lang === 'ar'
+
+  return (
+    <div className="bg-[#111827] border border-[#2D3748] rounded-2xl p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <h3 className="text-sm font-semibold text-[#F9FAFB]">
+            {t({ en: 'Riyadh Portfolio Map (Demo)', ar: 'خريطة محفظة الرياض (عرض توضيحي)' })}
+          </h3>
+          <p className="text-[11px] text-[#6B7280]">
+            {t({
+              en: 'Stylized view — click a marker to open building detail.',
+              ar: 'عرض مبسّط — انقر على العلامة لفتح تفاصيل المنشأة.',
+            })}
+          </p>
+        </div>
+      </div>
+      <div className="relative w-full aspect-[16/9] bg-[#020617] rounded-xl overflow-hidden border border-[#1F2937]">
+        {/* Simple stylized city blocks */}
+        <svg viewBox="0 0 100 60" className="w-full h-full text-[#1F2937]">
+          <rect x="5" y="10" width="30" height="16" fill="#0B1120" stroke="#1F2937" strokeWidth="0.5" />
+          <rect x="40" y="5" width="25" height="18" fill="#0B1120" stroke="#1F2937" strokeWidth="0.5" />
+          <rect x="70" y="12" width="22" height="15" fill="#0B1120" stroke="#1F2937" strokeWidth="0.5" />
+          <rect x="10" y="32" width="24" height="18" fill="#020617" stroke="#1F2937" strokeWidth="0.5" />
+          <rect x="42" y="32" width="28" height="20" fill="#020617" stroke="#1F2937" strokeWidth="0.5" />
+          <rect x="75" y="34" width="18" height="18" fill="#020617" stroke="#1F2937" strokeWidth="0.5" />
+        </svg>
+        {/* Building markers */}
+        {buildings.map((b, idx) => {
+          const positions = [
+            { left: '18%', top: '18%' },
+            { left: '52%', top: '14%' },
+            { left: '80%', top: '22%' },
+            { left: '16%', top: '48%' },
+            { left: '56%', top: '50%' },
+            { left: '82%', top: '50%' },
+          ]
+          const pos = positions[idx % positions.length]
+          const band = getRiskBand(b.riskScore)
+          const borderColor =
+            band === 'critical'
+              ? '#EF4444'
+              : band === 'high'
+              ? '#F97316'
+              : band === 'medium'
+              ? '#FBBF24'
+              : '#10B981'
+          return (
+            <button
+              key={b.id}
+              type="button"
+              className="absolute w-3 h-3 -mt-1.5 -ml-1.5 rounded-sm bg-[#020617]"
+              style={{
+                left: pos.left,
+                top: pos.top,
+                border: `1.5px solid ${borderColor}`,
+              }}
+              onClick={() => onSelectBuilding(b)}
+            >
+              <span className="sr-only">{t(b.name)}</span>
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 function BuildingCard({ building: b, onSelect, lang, t }) {
   const pct = (b.sensors.normal / b.sensors.total) * 100
   const d = daysUntil(b.licenseExpiry)
@@ -303,13 +458,15 @@ function BuildingCard({ building: b, onSelect, lang, t }) {
 
   return (
     <div
-      className="portal-card cursor-pointer"
+      className="portal-card bg-[#111827] border-[#2D3748] cursor-pointer"
       onClick={onSelect}
     >
       <div className="flex items-start justify-between mb-3">
         <div>
-          <h3 className="font-semibold text-gray-900 text-sm">{t(b.name)}</h3>
-          <p className="text-xs text-gray-400">{b.sbcType} · {b.floors} {t(ui.floors)} · {formatNum(b.areaSqm)} m²</p>
+          <h3 className="font-semibold text-[#F9FAFB] text-sm">{t(b.name)}</h3>
+          <p className="text-xs text-[#9CA3AF]">
+            {b.sbcType} · {b.floors} {t(ui.floors)} · {formatNum(b.areaSqm)} m²
+          </p>
         </div>
         <RiskBadge score={b.riskScore} />
       </div>
@@ -317,13 +474,24 @@ function BuildingCard({ building: b, onSelect, lang, t }) {
       {/* Sensor bar */}
       <div className="mb-3">
         <div className="flex items-center justify-between mb-1">
-          <span className="text-xs text-gray-500">{t(ui.sensors)}</span>
-          <span className="text-xs text-gray-500">{b.sensors.normal}/{b.sensors.total}</span>
+          <span className="text-xs text-[#9CA3AF]">{t(ui.sensors)}</span>
+          <span className="text-xs text-[#9CA3AF]">
+            {b.sensors.normal}/{b.sensors.total}
+          </span>
         </div>
-        <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden flex gap-0.5">
-          <div className="bg-green-400 rounded-full" style={{ width: `${(b.sensors.normal / b.sensors.total) * 100}%` }} />
-          <div className="bg-amber-400 rounded-full" style={{ width: `${(b.sensors.warning / b.sensors.total) * 100}%` }} />
-          <div className="bg-red-500 rounded-full" style={{ width: `${(b.sensors.critical / b.sensors.total) * 100}%` }} />
+        <div className="h-1.5 bg-[#1F2937] rounded-full overflow-hidden flex gap-0.5">
+          <div
+            className="bg-[#10B981]"
+            style={{ width: `${(b.sensors.normal / b.sensors.total) * 100}%` }}
+          />
+          <div
+            className="bg-[#FBBF24]"
+            style={{ width: `${(b.sensors.warning / b.sensors.total) * 100}%` }}
+          />
+          <div
+            className="bg-[#EF4444]"
+            style={{ width: `${(b.sensors.critical / b.sensors.total) * 100}%` }}
+          />
         </div>
       </div>
 
@@ -331,13 +499,15 @@ function BuildingCard({ building: b, onSelect, lang, t }) {
         <div className="flex items-center gap-3">
           <StatusBadge status={b.licenseStatus} />
           {b.activeAlerts > 0 && (
-            <span className="flex items-center gap-1 text-xs text-red-600 font-medium">
+            <span className="flex items-center gap-1 text-xs text-[#F97373] font-medium">
               <AlertTriangle className="w-3 h-3" />
               {b.activeAlerts}
             </span>
           )}
         </div>
-        <span className="text-xs text-gray-400">{t({ en: `${d}d to renewal`, ar: `${d} يوم للتجديد` })}</span>
+        <span className="text-xs text-[#9CA3AF]">
+          {t({ en: `${d}d to renewal`, ar: `${d} يوم للتجديد` })}
+        </span>
       </div>
     </div>
   )
@@ -346,12 +516,21 @@ function BuildingCard({ building: b, onSelect, lang, t }) {
 function SensorBar({ sensors }) {
   return (
     <div className="flex items-center gap-1.5">
-      <div className="flex h-2 w-20 rounded-full overflow-hidden bg-gray-100">
-        <div className="bg-green-400" style={{ width: `${(sensors.normal / sensors.total) * 100}%` }} />
-        <div className="bg-amber-400" style={{ width: `${(sensors.warning / sensors.total) * 100}%` }} />
-        <div className="bg-red-500" style={{ width: `${(sensors.critical / sensors.total) * 100}%` }} />
+      <div className="flex h-2 w-20 rounded-full overflow-hidden bg-[#1F2937]">
+        <div
+          className="bg-[#10B981]"
+          style={{ width: `${(sensors.normal / sensors.total) * 100}%` }}
+        />
+        <div
+          className="bg-[#FBBF24]"
+          style={{ width: `${(sensors.warning / sensors.total) * 100}%` }}
+        />
+        <div
+          className="bg-[#EF4444]"
+          style={{ width: `${(sensors.critical / sensors.total) * 100}%` }}
+        />
       </div>
-      <span className="text-xs text-gray-400">{sensors.total}</span>
+      <span className="text-xs text-[#9CA3AF]">{sensors.total}</span>
     </div>
   )
 }
@@ -359,22 +538,29 @@ function SensorBar({ sensors }) {
 function BuildingDetail({ building: b, onBack, incidents, t, lang, isRTL }) {
   const buildingIncidents = incidents.filter(i => i.buildingId === b.id)
   const ArrowIcon = isRTL ? ChevronRight : ChevronLeft
+  const likelihoodIndex = Math.min(4, Math.max(0, Math.floor(b.riskScore / 20)))
+  const severityIndex = Math.min(4, Math.max(0, (b.baseSeverity ?? 3) - 1))
 
   return (
     <div className="space-y-6">
       {/* Back */}
-      <button onClick={onBack} className="flex items-center gap-1.5 text-[#1B4F72] text-sm font-medium hover:underline">
+      <button
+        onClick={onBack}
+        className="flex items-center gap-1.5 text-[#C9A84C] text-sm font-medium hover:underline"
+      >
         <ArrowIcon className="w-4 h-4" />
         {t(ui.buildings)}
       </button>
 
       {/* Header */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div className="bg-[#111827] rounded-2xl border border-[#2D3748] shadow-sm p-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">{t(b.name)}</h1>
-            <p className="text-gray-500 text-sm mt-1">{t(b.region)} · {b.sbcType} · {b.floors} {t(ui.floors)} · {formatNum(b.areaSqm)} m²</p>
-            <p className="text-gray-400 text-xs mt-1">{b.licenseNo}</p>
+            <h1 className="text-2xl font-bold text-[#F9FAFB]">{t(b.name)}</h1>
+            <p className="text-[#9CA3AF] text-sm mt-1">
+              {t(b.region)} · {b.sbcType} · {b.floors} {t(ui.floors)} · {formatNum(b.areaSqm)} m²
+            </p>
+            <p className="text-[#6B7280] text-xs mt-1">{b.licenseNo}</p>
           </div>
           <RiskBadge score={b.riskScore} size="lg" />
         </div>
@@ -382,21 +568,23 @@ function BuildingDetail({ building: b, onBack, incidents, t, lang, isRTL }) {
         {/* Risk factor bars */}
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="sm:col-span-2">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">{t({ en: 'Top Risk Drivers', ar: 'أبرز محركات المخاطر' })}</h3>
+            <h3 className="text-sm font-semibold text-[#F9FAFB] mb-3">
+              {t({ en: 'Top Risk Drivers', ar: 'أبرز محركات المخاطر' })}
+            </h3>
             {[
               { label: { en: 'Fire Suppression', ar: 'نظام الإطفاء' }, pct: 72 },
               { label: { en: 'Sensor Coverage', ar: 'تغطية المستشعرات' }, pct: Math.round((b.sensors.normal / b.sensors.total) * 100) },
               { label: { en: 'Inspection Compliance', ar: 'الامتثال للفحوصات' }, pct: b.licenseStatus === 'active' ? 85 : 30 },
             ].map((r, i) => (
               <div key={i} className="mb-3">
-                <div className="flex justify-between text-xs text-gray-600 mb-1">
+                <div className="flex justify-between text-xs text-[#9CA3AF] mb-1">
                   <span>{t(r.label)}</span>
                   <span className="font-mono">{r.pct}%</span>
                 </div>
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-[#1F2937] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-500 ${
-                      r.pct >= 80 ? 'bg-green-400' : r.pct >= 60 ? 'bg-amber-400' : 'bg-red-500'
+                      r.pct >= 80 ? 'bg-[#10B981]' : r.pct >= 60 ? 'bg-[#FBBF24]' : 'bg-[#EF4444]'
                     }`}
                     style={{ width: `${r.pct}%` }}
                   />
@@ -404,24 +592,161 @@ function BuildingDetail({ building: b, onBack, incidents, t, lang, isRTL }) {
               </div>
             ))}
           </div>
-          <div className="bg-gray-50 rounded-xl p-4">
-            <h3 className="text-xs font-semibold text-gray-700 mb-3">{t({ en: 'License Info', ar: 'معلومات الترخيص' })}</h3>
-            <div className="space-y-2 text-xs">
+          <div className="bg-[#0B1120] rounded-xl p-4 border border-[#2D3748]">
+            <h3 className="text-xs font-semibold text-[#F9FAFB] mb-3">
+              {t({ en: 'License Info', ar: 'معلومات الترخيص' })}
+            </h3>
+            <div className="space-y-2 text-xs text-[#9CA3AF]">
               <div className="flex justify-between">
-                <span className="text-gray-500">{t(ui.license)}</span>
+                <span>{t(ui.license)}</span>
                 <StatusBadge status={b.licenseStatus} />
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">{t({ en: 'Expiry', ar: 'الانتهاء' })}</span>
-                <span className="font-medium text-gray-800">{b.licenseExpiry}</span>
+                <span>{t({ en: 'Expiry', ar: 'الانتهاء' })}</span>
+                <span className="font-medium text-[#F9FAFB]">{b.licenseExpiry}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">{t(ui.vendor)}</span>
-                <span className="font-medium text-gray-800 text-end">{t(b.vendor)}</span>
+                <span>{t(ui.vendor)}</span>
+                <span className="font-medium text-[#F9FAFB] text-end">{t(b.vendor)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">{t({ en: 'Last Inspection', ar: 'آخر فحص' })}</span>
-                <span className="font-medium text-gray-800">{b.lastInspection}</span>
+                <span>{t({ en: 'Last Inspection', ar: 'آخر فحص' })}</span>
+                <span className="font-medium text-[#F9FAFB]">{b.lastInspection}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* MDRE Risk Engine panel */}
+        <div className="mt-6 border-t border-[#2D3748] pt-5">
+          <button
+            type="button"
+            className="w-full flex items-center justify-between text-xs font-medium text-[#F9FAFB] py-2"
+          >
+            <span>
+              {t({
+                en: 'Dynamic Risk Engine — How your score is calculated',
+                ar: 'محرك المخاطر الديناميكي — كيف تُحسب درجتك',
+              })}
+            </span>
+            <ChevronRight className={`w-4 h-4 text-[#9CA3AF] ${isRTL ? 'rotate-180' : ''}`} />
+          </button>
+          <div className="mt-3 grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="space-y-2 text-xs">
+              {[
+                {
+                  id: 1,
+                  title: {
+                    en: 'Layer 1 — Structural Profile',
+                    ar: 'الطبقة 1 — البيانات الهيكلية',
+                  },
+                  desc: {
+                    en: 'Occupancy type, building age, structural materials — static characteristics.',
+                    ar: 'نوع الإشغال، عمر المبنى، المواد الإنشائية — السمات الثابتة.',
+                  },
+                  dir: '→',
+                },
+                {
+                  id: 2,
+                  title: {
+                    en: 'Layer 2 — Administrative Compliance',
+                    ar: 'الطبقة 2 — الامتثال الإداري',
+                  },
+                  desc: {
+                    en: 'CR status, municipal violation history, operational track record.',
+                    ar: 'حالة السجل التجاري، سجل المخالفات البلدية، التاريخ التشغيلي.',
+                  },
+                  dir: '→',
+                },
+                {
+                  id: 3,
+                  title: {
+                    en: 'Layer 3 — Spatial Factors',
+                    ar: 'الطبقة 3 — العوامل المكانية',
+                  },
+                  desc: {
+                    en: 'Distance to nearest CD station, urban density, proximity to hazardous facilities.',
+                    ar: 'المسافة من أقرب محطة دفاع مدني، الكثافة الحضرية، القرب من منشآت خطرة.',
+                  },
+                  dir: '→',
+                },
+                {
+                  id: 4,
+                  title: {
+                    en: 'Layer 4 — Temporal & Escalation Factors',
+                    ar: 'الطبقة 4 — العوامل الزمنية والتصعيدية',
+                  },
+                  desc: {
+                    en: 'Time of day, weekday/weekend, seasonal patterns, high-risk periods.',
+                    ar: 'وقت اليوم، اليوم من الأسبوع، المواسم، الفترات ذات المخاطر العالية.',
+                  },
+                  dir: '→',
+                },
+                {
+                  id: 5,
+                  title: {
+                    en: 'Layer 5 — Real-Time Telemetry',
+                    ar: 'الطبقة 5 — البيانات الفورية',
+                  },
+                  desc: {
+                    en: 'Live sensor readings, weather conditions, government API updates.',
+                    ar: 'قراءات المستشعرات الحية، حالة الطقس، تحديثات واجهات برمجة التطبيقات الحكومية.',
+                  },
+                  dir: '↑',
+                },
+              ].map(layer => (
+                <div
+                  key={layer.id}
+                  className="flex gap-3 border-l border-[#2D3748] ps-3"
+                  style={isRTL ? { borderLeft: 'none', borderRight: '1px solid #2D3748', paddingLeft: 0, paddingRight: '0.75rem' } : {}}
+                >
+                  <div className="mt-0.5 text-[#C9A84C] text-xs font-mono">{layer.dir}</div>
+                  <div>
+                    <div className="text-[11px] font-semibold text-[#F9FAFB]">
+                      {t(layer.title)}
+                    </div>
+                    <div className="text-[11px] text-[#9CA3AF]">{t(layer.desc)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="space-y-3">
+              <div className="text-xs text-[#9CA3AF]">
+                {t({
+                  en: 'Risk Matrix — current position',
+                  ar: 'مصفوفة المخاطر — موقع المنشأة الحالي',
+                })}
+              </div>
+              <div className="relative w-full aspect-[5/5] max-w-xs bg-[#020617] border border-[#2D3748] rounded-md p-2">
+                <div className="grid grid-cols-5 grid-rows-5 gap-1 h-full">
+                  {Array.from({ length: 25 }).map((_, idx) => {
+                    const row = Math.floor(idx / 5)
+                    const col = idx % 5
+                    const shade = 20 + row * 12 + col * 4
+                    const bg = `rgb(${15 + shade}, ${23 + shade}, ${42 + shade})`
+                    return (
+                      <div
+                        key={idx}
+                        style={{ backgroundColor: bg }}
+                        className="rounded-[2px]"
+                      />
+                    )
+                  })}
+                </div>
+                {/* Gold dot for this building */}
+                <div
+                  className="absolute w-2 h-2 rounded-full bg-[#C9A84C] shadow-sm"
+                  style={{
+                    left: `calc(${(likelihoodIndex / 4) * 100}% - 0.25rem)`,
+                    bottom: `calc(${(severityIndex / 4) * 100}% - 0.25rem)`,
+                  }}
+                />
+              </div>
+              <div className="text-[11px] text-[#6B7280]">
+                {t({
+                  en: 'Likelihood (X axis) and Severity (Y axis) update automatically when MDRE layers detect new signals.',
+                  ar: 'احتمالية الحدوث (المحور الأفقي) وشدة الأثر (المحور الرأسي) تتحدّث تلقائياً عند اكتشاف إشارات جديدة من طبقات محرك المخاطر.',
+                })}
               </div>
             </div>
           </div>
@@ -505,45 +830,60 @@ function AlertsSection({ buildings, incidents, t, lang }) {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-xl font-bold text-gray-900">{t(ui.alerts)}</h1>
+      <h1 className="text-xl font-bold text-[#F9FAFB]">{t(ui.alerts)}</h1>
       <div className="space-y-3">
         {allAlerts.map(alert => (
           <div
             key={alert.id}
-            className={`bg-white rounded-xl border shadow-sm p-4 ${
-              alert.severity === 'critical' ? 'border-red-200' :
-              alert.severity === 'high' ? 'border-orange-200' :
-              'border-gray-100'
-            }`}
+            className="bg-[#111827] rounded-xl border border-[#2D3748] shadow-sm p-4"
           >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex items-start gap-3">
-                <div className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
-                  alert.severity === 'critical' ? 'bg-red-600 animate-pulse' :
-                  alert.severity === 'high' ? 'bg-orange-500' :
-                  alert.severity === 'medium' ? 'bg-amber-500' : 'bg-gray-400'
-                }`} />
+                <div
+                  className={`w-0.5 h-8 mt-1 flex-shrink-0 ${
+                    alert.severity === 'critical'
+                      ? 'bg-[#EF4444]'
+                      : alert.severity === 'high'
+                      ? 'bg-[#F97316]'
+                      : alert.severity === 'medium'
+                      ? 'bg-[#FBBF24]'
+                      : 'bg-[#4B5563]'
+                  }`}
+                />
                 <div>
-                  <div className="font-semibold text-sm text-gray-900">{t(alert.type)}</div>
-                  <div className="text-xs text-gray-500">{alert.building && t(alert.building.name)} · {alert.date}</div>
-                  <div className="text-xs text-gray-400 mt-1">{t(alert.description)}</div>
+                  <div className="font-semibold text-sm text-[#F9FAFB]">
+                    {t(alert.type)}
+                  </div>
+                  <div className="text-xs text-[#9CA3AF]">
+                    {alert.building && t(alert.building.name)} · {alert.date}
+                  </div>
+                  <div className="text-xs text-[#6B7280] mt-1">
+                    {t(alert.description)}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <RiskBadge score={
-                  alert.severity === 'critical' ? 90 :
-                  alert.severity === 'high' ? 75 :
-                  alert.severity === 'medium' ? 60 : 40
-                } showScore={false} />
+                <RiskBadge
+                  score={
+                    alert.severity === 'critical'
+                      ? 90
+                      : alert.severity === 'high'
+                      ? 75
+                      : alert.severity === 'medium'
+                      ? 60
+                      : 40
+                  }
+                  showScore={false}
+                />
                 <StatusBadge status={alert.status} />
               </div>
             </div>
             {alert.status !== 'resolved' && alert.status !== 'settled' && (
               <div className="mt-3 flex gap-2">
-                <button className="px-3 py-1.5 bg-[#1B4F72] text-white text-xs font-medium rounded-lg hover:bg-[#164060] transition-colors">
+                <button className="px-3 py-1.5 bg-[#C9A84C] text-[#0A0E1A] text-xs font-medium rounded-lg hover:bg-[#B18E3D] transition-colors">
                   {t(ui.requestInspection)}
                 </button>
-                <button className="px-3 py-1.5 border border-gray-200 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                <button className="px-3 py-1.5 border border-[#2D3748] text-[#F9FAFB] text-xs font-medium rounded-lg hover:bg-[#1F2937] transition-colors">
                   {t(ui.submitMaintenance)}
                 </button>
               </div>
@@ -566,42 +906,52 @@ function MarketplaceSection({ products, t, lang }) {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-xl font-bold text-gray-900">{t(ui.marketplace)}</h1>
-        <p className="text-gray-500 text-sm">{t({ en: 'Safety products and services from Madani Tech', ar: 'منتجات وخدمات السلامة من مدني تك' })}</p>
+        <h1 className="text-xl font-bold text-[#F9FAFB]">{t(ui.marketplace)}</h1>
+        <p className="text-[#9CA3AF] text-sm">
+          {t({
+            en: 'Safety products and services from Madani Tech',
+            ar: 'منتجات وخدمات السلامة من مدني تك',
+          })}
+        </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
         {products.map(p => (
-          <div key={p.id} className="portal-card flex flex-col">
+          <div key={p.id} className="portal-card bg-[#111827] border-[#2D3748] flex flex-col">
             <div className="flex items-start justify-between mb-3">
               <div>
-                <h3 className="font-bold text-gray-900 text-sm">{t(p.name)}</h3>
-                <p className="text-xs text-gray-400">{t(p.category)}</p>
+                <h3 className="font-bold text-[#F9FAFB] text-sm">{t(p.name)}</h3>
+                <p className="text-xs text-[#9CA3AF]">{t(p.category)}</p>
               </div>
-              <span className={`text-[10px] font-bold px-2 py-1 rounded-lg ${badgeColors[p.badge] ?? 'bg-gray-100 text-gray-700'}`}>
+              <span
+                className={`text-[10px] font-bold px-2 py-1 rounded-lg ${
+                  badgeColors[p.badge] ?? 'bg-[#1F2937] text-[#F9FAFB]'
+                }`}
+              >
                 {p.badge}
               </span>
             </div>
             <ul className="space-y-1.5 flex-1 mb-4">
               {p.features.map((f, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-gray-600">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-green-600 mt-0.5 flex-shrink-0" />
+                <li key={i} className="flex items-start gap-2 text-xs text-[#9CA3AF]">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981] mt-0.5 flex-shrink-0" />
                   {t(f)}
                 </li>
               ))}
             </ul>
-            <div className="border-t border-gray-100 pt-3 flex items-center justify-between">
-              <span className="text-xs text-gray-500">{t(p.pricing)}</span>
-              <button className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                p.installed
-                  ? 'bg-green-50 text-green-700 border border-green-200'
-                  : 'bg-[#1B4F72] text-white hover:bg-[#164060]'
-              }`}>
+            <div className="border-t border-[#2D3748] pt-3 flex items-center justify-between">
+              <span className="text-xs text-[#9CA3AF]">{t(p.pricing)}</span>
+              <button
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                  p.installed
+                    ? 'border border-[#10B981] text-[#10B981]'
+                    : 'bg-[#C9A84C] text-[#0A0E1A] hover:bg-[#B18E3D]'
+                }`}
+              >
                 {p.installed
                   ? t({ en: 'Installed', ar: 'مثبّت' })
                   : p.badge === 'CERTIFIED' && p.id !== 'PRD-002'
-                    ? t(ui.requestQuote)
-                    : t(ui.subscribe)
-                }
+                  ? t(ui.requestQuote)
+                  : t(ui.subscribe)}
               </button>
             </div>
           </div>
@@ -622,21 +972,21 @@ function ReportsSection({ buildings, t }) {
 
   return (
     <div className="space-y-5">
-      <h1 className="text-xl font-bold text-gray-900">{t(ui.reports)}</h1>
+      <h1 className="text-xl font-bold text-[#F9FAFB]">{t(ui.reports)}</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {reports.map((r, i) => {
           const Icon = r.icon
           return (
-            <div key={i} className="portal-card flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-[#EBF5FB] flex items-center justify-center flex-shrink-0">
-                <Icon className="w-5 h-5 text-[#1B4F72]" />
+            <div key={i} className="portal-card bg-[#111827] border-[#2D3748] flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-[#1F2937] flex items-center justify-center flex-shrink-0">
+                <Icon className="w-5 h-5 text-[#C9A84C]" />
               </div>
               <div className="flex-1 min-w-0">
-                <div className="font-semibold text-sm text-gray-900">{t(r.title)}</div>
-                <div className="text-xs text-gray-400">{t(r.desc)}</div>
-                <div className="text-xs text-gray-300 mt-0.5">{r.format}</div>
+                <div className="font-semibold text-sm text-[#F9FAFB]">{t(r.title)}</div>
+                <div className="text-xs text-[#9CA3AF]">{t(r.desc)}</div>
+                <div className="text-xs text-[#6B7280] mt-0.5">{r.format}</div>
               </div>
-              <button className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-gray-700 text-xs font-medium hover:bg-gray-50 transition-colors">
+              <button className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#2D3748] text-[#F9FAFB] text-xs font-medium hover:bg-[#1F2937] transition-colors">
                 <Download className="w-3.5 h-3.5" />
                 {t(ui.downloadReport)}
               </button>

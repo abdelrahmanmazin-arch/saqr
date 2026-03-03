@@ -12,14 +12,20 @@ export function AppProvider({ children }) {
   const [riskEventActive, setRiskEventActive] = useState(false)
   const [insuranceFlag, setInsuranceFlag] = useState(false)
 
-  // Risk event simulation — sprinkler pressure drop on bld-009
+  // Risk event simulation — sprinkler pressure drop on bld-009 (Al Jubail Industrial Facility)
   const simulateRiskEvent = () => {
     setSimulatingEvent(true)
     setRiskEventActive(true)
     setBuildingsState(prev =>
       prev.map(b =>
         b.id === 'bld-009'
-          ? { ...b, riskScore: 96, activeAlerts: b.activeAlerts + 2, status: 'sla-active' }
+          ? {
+              ...b,
+              // Demo: simulate score change 88 → 96 and add two critical alerts
+              riskScore: 96,
+              activeAlerts: b.activeAlerts + 2,
+              status: 'sla-active',
+            }
           : b
       )
     )
@@ -31,7 +37,13 @@ export function AppProvider({ children }) {
     setBuildingsState(prev =>
       prev.map(b =>
         b.id === 'bld-009'
-          ? { ...b, riskScore: 45, activeAlerts: 0, status: 'active' }
+          ? {
+              ...b,
+              // Reset to original seed state for Al Jubail Industrial Facility
+              riskScore: 88,
+              activeAlerts: 6,
+              status: 'sla-active',
+            }
           : b
       )
     )
