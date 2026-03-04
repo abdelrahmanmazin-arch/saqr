@@ -255,7 +255,7 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
                                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 ${isRoot ? 'bg-red-600 border-red-600 text-white' : 'bg-white border-gray-200 text-gray-600'}`}>
                                     {i + 1}
                                   </div>
-                                  {i < lesson.fiveWhys.length - 1 && <div className="flex-1 w-0.5 bg-gray-200 my-0.5 min-h-[8px]" />}
+                                  {i < lesson.whys.length - 1 && <div className="flex-1 w-0.5 bg-gray-200 my-0.5 min-h-[8px]" />}
                                 </div>
                                 <div className={`flex-1 pb-2 ${isRoot ? 'border border-red-200 rounded-xl p-3 bg-red-50' : ''}`}>
                                   <div className={`text-xs font-bold mb-0.5 ${isRoot ? 'text-red-700' : 'text-gray-500'}`}>
