@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { FileText, Download, TrendingUp, TrendingDown, ChevronRight, X } from 'lucide-react'
 
 const SURFACE = '#FFFFFF'
-const ELEVATED = '#F3F4F6'
-const BORDER = '#E5E7EB'
-const GOLD = '#1B4F72'
-const TEXT_PRIMARY = '#111827'
-const TEXT_SECONDARY = '#6B7280'
+const ELEVATED = '#F7F5F2'
+const BORDER = 'rgba(0,0,0,0.07)'
+const GOLD = '#1E3A5F'
+const TEXT_PRIMARY = '#18181B'
+const TEXT_SECONDARY = '#52525B'
 
 const TYPE_LABEL = {
   'monthly-risk':        { en: 'Monthly Risk Report', ar: 'تقرير المخاطر الشهري' },
@@ -137,7 +137,7 @@ export default function Reports({ t, lang, isRTL, buildings, reports, addToast }
               <button onClick={() => setPreview(null)} style={{ color: TEXT_SECONDARY, border: `1px solid ${BORDER}` }} className="px-4 py-1.5 rounded-lg text-sm">
                 {t({ en: 'Close', ar: 'إغلاق' })}
               </button>
-              <button onClick={() => { download(preview); setPreview(null) }} style={{ background: GOLD, color: '#0A0E1A' }} className="px-4 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5">
+              <button onClick={() => { download(preview); setPreview(null) }} style={{ background: GOLD, color: 'white' }} className="px-4 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1.5">
                 <Download size={13} />
                 {t({ en: 'Download PDF', ar: 'تنزيل PDF' })}
               </button>

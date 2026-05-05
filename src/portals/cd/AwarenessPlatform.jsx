@@ -29,7 +29,7 @@ function NewCampaignModal({ onClose, onSave, t }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
           <div className="font-bold text-gray-900">{t({ en: 'New Awareness Campaign', ar: 'حملة توعوية جديدة' })}</div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X className="w-4 h-4" /></button>
@@ -107,7 +107,7 @@ function PublishModal({ visibility, onConfirm, onClose, t }) {
   const next = visibility === 'internal' ? 'public' : 'internal'
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl w-full max-w-sm p-6 text-center" onClick={e => e.stopPropagation()}>
         {next === 'public' ? <Eye className="w-10 h-10 text-blue-500 mx-auto mb-3" /> : <EyeOff className="w-10 h-10 text-gray-400 mx-auto mb-3" />}
         <div className="font-bold text-gray-900 mb-2">{t({ en: `Change visibility to ${next.toUpperCase()}?`, ar: `تغيير الظهور إلى ${next === 'public' ? 'عام' : 'داخلي'}؟` })}</div>
         <p className="text-sm text-gray-500 mb-5">
@@ -181,7 +181,7 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {kpis.map((k, i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
             <div className="text-xs text-gray-500 mb-1">{t(k.label)}</div>
             <div className={`text-2xl font-bold font-mono ${k.color}`}>{k.value}</div>
           </div>
@@ -189,7 +189,7 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
       </div>
 
       {/* Campaigns */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100">
           <h2 className="font-bold text-gray-900">{t({ en: 'Campaigns', ar: 'الحملات' })}</h2>
         </div>
@@ -213,7 +213,7 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
       </div>
 
       {/* Lessons Learned */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100">
           <h2 className="font-bold text-gray-900">{t({ en: 'Lessons Learned', ar: 'الدروس المستفادة' })}</h2>
         </div>
@@ -313,7 +313,7 @@ export default function AwarenessPlatform({ t, lang, addToast }) {
       </div>
 
       {/* Content Library */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100">
           <h2 className="font-bold text-gray-900">{t({ en: 'Content Library', ar: 'مكتبة المحتوى' })}</h2>
         </div>

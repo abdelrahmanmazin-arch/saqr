@@ -3,10 +3,10 @@ import { daysUntil } from '../../data/seed'
 import { Bell, CheckCircle2, AlertTriangle, Info, CheckSquare } from 'lucide-react'
 
 const SURFACE = '#FFFFFF'
-const ELEVATED = '#F3F4F6'
-const BORDER = '#E5E7EB'
-const TEXT_PRIMARY = '#111827'
-const TEXT_SECONDARY = '#6B7280'
+const ELEVATED = '#F7F5F2'
+const BORDER = 'rgba(0,0,0,0.07)'
+const TEXT_PRIMARY = '#18181B'
+const TEXT_SECONDARY = '#52525B'
 
 const TYPE_CONFIG = {
   critical: { color: '#EF4444', icon: AlertTriangle },
@@ -53,8 +53,8 @@ export default function Notifications({ t, lang, isRTL, buildings, notifications
             key={tb.id}
             onClick={() => setActiveTab(tb.id)}
             style={{
-              color: activeTab === tb.id ? '#1B4F72' : TEXT_SECONDARY,
-              borderBottom: `2px solid ${activeTab === tb.id ? '#1B4F72' : 'transparent'}`,
+              color: activeTab === tb.id ? '#1E3A5F' : TEXT_SECONDARY,
+              borderBottom: `2px solid ${activeTab === tb.id ? '#1E3A5F' : 'transparent'}`,
               marginBottom: -1,
             }}
             className="px-4 py-2 text-sm font-medium transition-colors"
@@ -68,7 +68,7 @@ export default function Notifications({ t, lang, isRTL, buildings, notifications
         <>
           <div className="flex justify-end">
             {unread > 0 && (
-              <button onClick={markAllRead} style={{ color: '#1B4F72' }} className="text-xs hover:underline">
+              <button onClick={markAllRead} style={{ color: '#1E3A5F' }} className="text-xs hover:underline">
                 {t({ en: 'Mark all read', ar: 'تحديد الكل كمقروء' })}
               </button>
             )}

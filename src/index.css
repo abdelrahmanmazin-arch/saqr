@@ -14,8 +14,8 @@
 
   body {
     margin: 0;
-    background-color: #ffffff;
-    color: #111827;
+    background-color: #F7F5F2;
+    color: #18181B;
     line-height: 1.6;
   }
 
@@ -38,13 +38,28 @@
 
   /* Portal card */
   .portal-card {
-    @apply bg-white rounded-2xl shadow-sm border border-gray-100 p-6 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
+    @apply bg-white rounded-2xl p-6 transition-colors;
+    border: 1px solid rgba(0,0,0,0.07);
   }
 
   /* KPI tile */
   .kpi-tile {
-    @apply bg-white rounded-xl border border-gray-100 p-4 flex flex-col gap-1;
+    @apply bg-white rounded-xl p-4 flex flex-col gap-1;
+    border: 1px solid rgba(0,0,0,0.07);
   }
+
+  /* Section label */
+  .section-label {
+    @apply uppercase tracking-widest text-[10px] font-medium;
+    color: #A1A1AA;
+  }
+
+  /* Severity stripe — 3px left border */
+  .stripe-critical { border-left: 3px solid #EF4444; }
+  .stripe-high     { border-left: 3px solid #F97316; }
+  .stripe-medium   { border-left: 3px solid #EAB308; }
+  .stripe-low      { border-left: 3px solid #22C55E; }
+  .stripe-info     { border-left: 3px solid #3B82F6; }
 
   /* Status badge */
   .status-active   { @apply bg-green-100 text-green-800; }

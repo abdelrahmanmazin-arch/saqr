@@ -33,7 +33,7 @@ function DroneFeedPanel({ drone, t }) {
     return () => clearInterval(iv)
   }, [])
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
       <div className="px-4 py-2.5 border-b border-gray-100 flex items-center gap-2">
         <Video className="w-4 h-4 text-purple-600" />
         <span className="font-semibold text-gray-800 text-sm">{drone.callsign ?? drone.id} — {t({ en: 'Live Drone Feed', ar: 'البث المباشر للطائرة' })}</span>
@@ -95,7 +95,7 @@ function LaunchModal({ drone, onLaunch, onClose, t, lang }) {
   const isRTL = lang === 'ar'
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="font-bold text-gray-900">{t({ en: 'Launch Drone', ar: 'إطلاق الطائرة' })} — {drone.id}</div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X className="w-4 h-4" /></button>
@@ -195,7 +195,7 @@ export default function Surveillance({ t, lang, addToast }) {
       })()}
 
       {/* Drone Fleet */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-bold text-gray-900">{t({ en: 'Drone Fleet', ar: 'أسطول الطائرات المسيّرة' })}</h2>
           <span className="text-xs text-gray-400">{drones.filter(d => d.status === 'airborne').length} {t({ en: 'airborne', ar: 'في الجو' })}</span>
@@ -259,7 +259,7 @@ export default function Surveillance({ t, lang, addToast }) {
       </div>
 
       {/* Thermal Alerts */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100">
           <h2 className="font-bold text-gray-900">{t({ en: 'Thermal Alerts', ar: 'التنبيهات الحرارية' })}</h2>
         </div>
@@ -305,7 +305,7 @@ export default function Surveillance({ t, lang, addToast }) {
       </div>
 
       {/* Behavioral AI Detection */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100">
           <h2 className="font-bold text-gray-900">{t({ en: 'Behavioral Risk Detection', ar: 'رصد المخاطر السلوكية' })}</h2>
         </div>

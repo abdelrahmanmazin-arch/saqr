@@ -3,13 +3,13 @@ import { daysUntil } from '../../data/seed'
 import { scheduledTasks } from '../../data/commercialData'
 import { Shield, AlertTriangle, CheckCircle2, Clock, Phone, Radio, ChevronLeft, ChevronRight, CheckSquare } from 'lucide-react'
 
-const BG = '#F9FAFB'
+const BG = '#F7F5F2'
 const SURFACE = '#FFFFFF'
-const ELEVATED = '#F3F4F6'
-const BORDER = '#E5E7EB'
-const GOLD = '#1B4F72'
-const TEXT_PRIMARY = '#111827'
-const TEXT_SECONDARY = '#6B7280'
+const ELEVATED = '#F7F5F2'
+const BORDER = 'rgba(0,0,0,0.07)'
+const GOLD = '#1E3A5F'
+const TEXT_PRIMARY = '#18181B'
+const TEXT_SECONDARY = '#52525B'
 
 const MOCK_ALERT = {
   id: 'alert-bso-001',
@@ -183,7 +183,7 @@ export default function BSOView({ t, lang, isRTL, buildings, bsoProfile, addToas
             </button>
           </div>
           {onDuty && overdueCount > 0 && (
-            <div style={{ background: '#1A0000', border: `1px solid #EF4444`, borderLeft: '3px solid #EF4444' }} className="mt-3 rounded-lg px-3 py-2">
+            <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderLeft: '3px solid #EF4444' }} className="mt-3 rounded-lg px-3 py-2">
               <div style={{ color: '#EF4444' }} className="text-xs font-semibold">
                 {t({ en: `${overdueCount} overdue task${overdueCount > 1 ? 's' : ''} require attention`, ar: `${overdueCount} مهمة متأخرة تحتاج اهتماماً` })}
               </div>

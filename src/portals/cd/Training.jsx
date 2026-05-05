@@ -31,7 +31,7 @@ const UPCOMING_SESSIONS = [
 function CertModal({ participant, program, onClose, t, addToast }) {
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl w-full max-w-md" onClick={e => e.stopPropagation()}>
         {/* Certificate header */}
         <div className="bg-gradient-to-br from-[#1B2F5B] to-[#0F1F3D] rounded-t-2xl p-6 text-white text-center">
           <div className="flex justify-center gap-4 mb-3">
@@ -89,7 +89,7 @@ function BookingModal({ program, onClose, addToast, t }) {
     const s = UPCOMING_SESSIONS[selected]
     return (
       <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
-        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center" onClick={e => e.stopPropagation()}>
+        <div className="bg-white rounded-2xl w-full max-w-sm p-6 text-center" onClick={e => e.stopPropagation()}>
           <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-3" />
           <div className="font-bold text-gray-900 mb-1">{t({ en: 'Booking Confirmed!', ar: 'تأكيد الحجز!' })}</div>
           <div className="text-sm text-gray-500 mb-3">{s.date} · {s.time}</div>
@@ -107,7 +107,7 @@ function BookingModal({ program, onClose, addToast, t }) {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="font-bold text-gray-900">{t({ en: 'Book Appointment', ar: 'حجز موعد' })}</div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X className="w-4 h-4" /></button>
@@ -143,7 +143,7 @@ function ProgramDetail({ program, onClose, addToast, t, lang }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-shrink-0">
           <div>
             <div className="font-bold text-gray-900">{t(program.name)}</div>
@@ -256,7 +256,7 @@ export default function Training({ t, lang, addToast }) {
       {/* KPIs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {kpis.map((k, i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
             <div className="text-xs text-gray-500 mb-1">{t(k.label)}</div>
             <div className={`text-2xl font-bold font-mono ${k.color}`}>{k.value}</div>
           </div>
@@ -269,7 +269,7 @@ export default function Training({ t, lang, addToast }) {
           const pct = prog.enrolled ? Math.round((prog.completed / prog.enrolled) * 100) : 0
           const mod = MODALITY[prog.modality]
           return (
-            <div key={prog.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:shadow-md transition-shadow cursor-pointer"
+            <div key={prog.id} className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => setDetailProg(prog)}>
               <div className="flex items-start justify-between gap-2 mb-3">
                 <div>
@@ -293,7 +293,7 @@ export default function Training({ t, lang, addToast }) {
       </div>
 
       {/* Leaderboard */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
           <Trophy className="w-4 h-4 text-yellow-500" />
           <h2 className="font-bold text-gray-900">{t({ en: 'Team Leaderboard', ar: 'لوحة قيادة الفرق' })}</h2>

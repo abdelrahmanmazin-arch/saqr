@@ -3,7 +3,7 @@ import { ui } from '../data/i18n'
 import { ShieldAlert, Globe, ArrowLeft } from 'lucide-react'
 
 const portalColors = {
-  commercial: 'bg-[#1B4F72]',
+  commercial: 'bg-[#1E3A5F]',
   cd:         'bg-[#991B1B]',
   insurance:  'bg-[#0F1F3D]',
   landing:    'bg-[#1B2F5B]',
@@ -16,7 +16,7 @@ export default function Header({ onNavClick, activeSection }) {
   const bgColor = portalColors[portal] ?? 'bg-[#1B2F5B]'
 
   return (
-    <header className={`${bgColor} text-white sticky top-0 z-50 shadow-md`} dir={dir}>
+    <header className={`${bgColor} text-white sticky top-0 z-50`} dir={dir}>
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo + Brand */}

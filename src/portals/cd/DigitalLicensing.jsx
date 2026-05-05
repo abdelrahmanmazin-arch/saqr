@@ -40,7 +40,7 @@ function ApplicationCard({ app, t, lang, addToast }) {
   const detail = selectedStage ? STAGE_DETAILS[selectedStage] : null
 
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
       <div className="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-2">
         <div>
           <div className="font-bold text-gray-900">{t(app.buildingName ?? { en: app.id, ar: app.id })}</div>
@@ -167,7 +167,7 @@ export default function DigitalLicensing({ t, lang, addToast }) {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {kpis.map((k, i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
             <div className="text-xs text-gray-500 mb-1">{t(k.label)}</div>
             <div className={`text-2xl font-bold font-mono ${k.color}`}>{k.value}</div>
           </div>
@@ -177,14 +177,14 @@ export default function DigitalLicensing({ t, lang, addToast }) {
       <div className="flex gap-1 bg-gray-100 rounded-xl p-1 w-fit">
         {[{ id: 'registry', label: { en: 'License Registry', ar: 'سجل التراخيص' } }, { id: 'applications', label: { en: 'Applications', ar: 'الطلبات' } }].map(t_ => (
           <button key={t_.id} onClick={() => setTab(t_.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === t_.id ? 'bg-white text-[#0891B2] shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}>
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === t_.id ? 'bg-white text-[#0891B2]' : 'text-gray-500 hover:text-gray-700'}`}>
             {t(t_.label)}
           </button>
         ))}
       </div>
 
       {tab === 'registry' && (
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead><tr className="bg-gray-50 text-xs text-gray-500">

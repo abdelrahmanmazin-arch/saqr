@@ -2,29 +2,34 @@ import { useApp } from '../context/AppContext'
 import { ui } from '../data/i18n'
 import {
   ShieldCheck, Building2, Siren, BarChart3, ChevronLeft, ChevronRight,
-  Zap, Globe, Shield, TrendingUp, CheckCircle2, AlertTriangle, Lock, Cpu
+  Zap, Globe, Shield, TrendingUp, CheckCircle2, AlertTriangle, Lock, Cpu, ArrowRight, ArrowLeft
 } from 'lucide-react'
 
+const PAGE_BG = '#F7F5F2'
+const SURFACE = '#FFFFFF'
+const BORDER = 'rgba(0,0,0,0.07)'
+const TEXT_1 = '#18181B'
+const TEXT_2 = '#52525B'
+const TEXT_3 = '#A1A1AA'
+
 export default function Landing() {
-  const { setPortal, t, lang, buildings, incidents, insuranceFlag } = useApp()
+  const { setPortal, t, lang, insuranceFlag } = useApp()
   const isRTL = lang === 'ar'
-  const ArrowIcon = isRTL ? ChevronLeft : ChevronRight
+  const ArrowIcon = isRTL ? ArrowLeft : ArrowRight
 
   const stats = [
-    { value: '9', label: t(ui.buildingsMonitored) },
-    { value: 'SAR 3.92B', label: t(ui.insuredValue) },
-    { value: '7', label: t(ui.activeCDUnits) },
-    { value: '2', label: t(ui.citiesCovered) },
+    { value: '9', label: { en: 'Buildings Monitored', ar: 'مبنى مُراقَب' } },
+    { value: 'SAR 3.92B', label: { en: 'Insured Value', ar: 'قيمة مؤمَّنة' } },
+    { value: '7', label: { en: 'Active CD Units', ar: 'وحدة دفاع مدني' } },
+    { value: '2', label: { en: 'Cities Covered', ar: 'مدينة مشمولة' } },
   ]
 
   const portals = [
     {
       id: 'commercial',
       icon: Building2,
-      color: 'from-[#1B4F72] to-[#2A6496]',
-      accentLight: 'bg-[#EBF5FB]',
-      accentText: 'text-[#1B4F72]',
-      accentBorder: 'border-[#1B4F72]',
+      accent: '#1E3A5F',
+      accentBg: '#EBF5FB',
       title: t(ui.commercialPortal),
       desc: t(ui.commercialDesc),
       tagline: { en: 'Monitor. Comply. Act.', ar: 'راقب. امتثل. تصرف.' },
@@ -38,10 +43,8 @@ export default function Landing() {
     {
       id: 'cd',
       icon: Siren,
-      color: 'from-[#991B1B] to-[#B91C1C]',
-      accentLight: 'bg-[#FEF2F2]',
-      accentText: 'text-[#991B1B]',
-      accentBorder: 'border-[#991B1B]',
+      accent: '#991B1B',
+      accentBg: '#FEF2F2',
       title: t(ui.cdPortal),
       desc: t(ui.cdDesc),
       tagline: { en: 'Predict. Dispatch. Enforce.', ar: 'تنبأ. أرسل. طبّق.' },
@@ -55,10 +58,8 @@ export default function Landing() {
     {
       id: 'insurance',
       icon: BarChart3,
-      color: 'from-[#0F1F3D] to-[#1B3460]',
-      accentLight: 'bg-[#EFF6FF]',
-      accentText: 'text-[#0F1F3D]',
-      accentBorder: 'border-[#0F1F3D]',
+      accent: '#0F1F3D',
+      accentBg: '#EFF6FF',
       title: t(ui.insurancePortal),
       desc: t(ui.insuranceDesc),
       tagline: { en: 'Price Accurately. Manage Risk.', ar: 'سعّر بدقة. أدر المخاطر.' },
@@ -71,25 +72,23 @@ export default function Landing() {
         { en: 'Portfolio benchmark analytics', ar: 'تحليلات معايير المحفظة' },
       ],
     },
+    {
+      id: 'madani',
+      icon: Cpu,
+      accent: '#374151',
+      accentBg: '#F3F4F6',
+      title: t({ en: 'Madani Tech Operations', ar: 'عمليات مدني تك' }),
+      desc: t({ en: 'Internal operator console', ar: 'لوحة تحكم المشغّل الداخلية' }),
+      tagline: { en: 'Platform-Wide Control.', ar: 'تحكم شامل بالمنصة.' },
+      locked: true,
+      caps: [
+        { en: 'AI model management & tuning', ar: 'إدارة نماذج الذكاء الاصطناعي وضبطها' },
+        { en: 'Platform-wide monitoring', ar: 'مراقبة شاملة للمنصة' },
+        { en: 'System configuration & APIs', ar: 'تهيئة النظام وواجهات API' },
+        { en: 'Multi-tenant role management', ar: 'إدارة الأدوار متعددة المستأجرين' },
+      ],
+    },
   ]
-
-  const madaniCard = {
-    id: 'madani',
-    icon: Cpu,
-    color: 'from-[#374151] to-[#1F2937]',
-    accentText: 'text-[#374151]',
-    accentBorder: 'border-[#374151]',
-    title: t({ en: 'Madani Tech Operations', ar: 'عمليات مدني تك' }),
-    desc: t({ en: 'Internal operator console', ar: 'لوحة تحكم المشغّل الداخلية' }),
-    tagline: { en: 'Platform-Wide Control.', ar: 'تحكم شامل بالمنصة.' },
-    locked: true,
-    caps: [
-      { en: 'AI model management & tuning', ar: 'إدارة نماذج الذكاء الاصطناعي وضبطها' },
-      { en: 'Platform-wide monitoring', ar: 'مراقبة شاملة للمنصة' },
-      { en: 'System configuration & APIs', ar: 'تهيئة النظام وواجهات API' },
-      { en: 'Multi-tenant role management', ar: 'إدارة الأدوار متعددة المستأجرين' },
-    ],
-  }
 
   const badges = [
     { icon: ShieldCheck, label: t(ui.sbc201) },
@@ -99,174 +98,182 @@ export default function Landing() {
   ]
 
   const howItWorks = [
-    { icon: Zap, title: { en: 'Real-time Data Ingestion', ar: 'استيعاب البيانات الفوري' }, desc: { en: 'IoT sensors, government APIs (Wathq, Balady, Salamah), and BMS feeds flow continuously into the platform.', ar: 'مستشعرات إنترنت الأشياء وواجهات الحكومة وأنظمة إدارة المباني تُغذّي المنصة بشكل مستمر.' } },
-    { icon: TrendingUp, title: { en: 'Dynamic Risk Scoring', ar: 'تقييم المخاطر الديناميكي' }, desc: { en: 'The MDRE recalculates every building\'s risk score in real-time using 5 AI algorithm layers.', ar: 'يُعيد MDRE حساب درجة مخاطر كل مبنى لحظياً باستخدام 5 طبقات خوارزمية ذكاء اصطناعي.' } },
-    { icon: AlertTriangle, title: { en: 'Automated Enforcement', ar: 'التطبيق الآلي' }, desc: { en: 'Critical thresholds trigger instant owner alerts, CD dispatch, SLA countdowns, and insurance profile updates.', ar: 'العتبات الحرجة تُفعّل تنبيهات فورية للمالك وإرسال الدفاع المدني وعدادات SLA وتحديث ملفات التأمين.' } },
-    { icon: CheckCircle2, title: { en: 'Resolution & Re-scoring', ar: 'الحل وإعادة التقييم' }, desc: { en: 'Once verified digitally by an inspector, the risk score normalizes instantly across all three portals.', ar: 'بمجرد التحقق الرقمي من المفتش، تعود درجة المخاطر إلى طبيعتها فوراً عبر جميع البوابات الثلاث.' } },
+    { icon: Zap, step: '01', title: { en: 'Real-time Data Ingestion', ar: 'استيعاب البيانات الفوري' }, desc: { en: 'IoT sensors, government APIs (Wathq, Balady, Salamah), and BMS feeds flow continuously into the platform.', ar: 'مستشعرات إنترنت الأشياء وواجهات الحكومة وأنظمة إدارة المباني تُغذّي المنصة بشكل مستمر.' } },
+    { icon: TrendingUp, step: '02', title: { en: 'Dynamic Risk Scoring', ar: 'تقييم المخاطر الديناميكي' }, desc: { en: 'The MDRE recalculates every building\'s risk score in real-time using 5 AI algorithm layers.', ar: 'يُعيد MDRE حساب درجة مخاطر كل مبنى لحظياً باستخدام 5 طبقات خوارزمية ذكاء اصطناعي.' } },
+    { icon: AlertTriangle, step: '03', title: { en: 'Automated Enforcement', ar: 'التطبيق الآلي' }, desc: { en: 'Critical thresholds trigger instant owner alerts, CD dispatch, SLA countdowns, and insurance profile updates.', ar: 'العتبات الحرجة تُفعّل تنبيهات فورية للمالك وإرسال الدفاع المدني وعدادات SLA وتحديث ملفات التأمين.' } },
+    { icon: CheckCircle2, step: '04', title: { en: 'Resolution & Re-scoring', ar: 'الحل وإعادة التقييم' }, desc: { en: 'Once verified digitally by an inspector, the risk score normalizes instantly across all three portals.', ar: 'بمجرد التحقق الرقمي من المفتش، تعود درجة المخاطر إلى طبيعتها فوراً عبر جميع البوابات الثلاث.' } },
+  ]
+
+  const riskBands = [
+    { range: '0–49', label: { en: 'LOW', ar: 'منخفض' }, color: '#22C55E', action: { en: 'Routine monitoring', ar: 'مراقبة روتينية' } },
+    { range: '50–69', label: { en: 'MEDIUM', ar: 'متوسط' }, color: '#EAB308', action: { en: 'Owner notified', ar: 'إشعار المالك' } },
+    { range: '70–84', label: { en: 'HIGH', ar: 'مرتفع' }, color: '#F97316', action: { en: '24-hour SLA', ar: 'SLA 24 ساعة' } },
+    { range: '85–100', label: { en: 'CRITICAL', ar: 'حرج' }, color: '#EF4444', action: { en: '4-hour SLA', ar: 'SLA 4 ساعات' } },
   ]
 
   return (
-    <div className="bg-white min-h-screen" dir={isRTL ? 'rtl' : 'ltr'}>
-      {/* ─── Hero ─────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#1B2F5B] via-[#1B3A6B] to-[#0F1F3D] text-white">
-        {/* Pattern overlay */}
-        <div className="absolute inset-0 opacity-5" style={{backgroundImage:'radial-gradient(circle at 1px 1px,white 1px,transparent 0)',backgroundSize:'32px 32px'}} />
-        {/* Gold accent bar */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#C5A028] via-[#E8C84A] to-[#C5A028]" />
+    <div style={{ background: PAGE_BG, minHeight: '100vh' }} dir={isRTL ? 'rtl' : 'ltr'}>
 
-        <div className="relative max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
-          {/* Vision 2030 badge */}
-          <div className="flex justify-center mb-6">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#C5A028]/20 border border-[#C5A028]/40 text-[#C5A028] text-sm font-medium">
-              <Shield className="w-4 h-4" />
+      {/* ─── Hero ─────────────────────────────────────────────────── */}
+      <section style={{ background: '#0F1C35', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        {/* Top rule — authority stripe */}
+        <div style={{ height: 3, background: 'linear-gradient(90deg, #1E3A5F 0%, #991B1B 33%, #0F1F3D 66%, #1E3A5F 100%)' }} />
+
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-28">
+          {/* Vision badge */}
+          <div className="flex justify-center mb-8">
+            <span style={{ border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.6)' }} className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] tracking-wider uppercase font-medium">
+              <Shield size={11} />
               {t({ en: 'Saudi Vision 2030 — National Safety Transformation', ar: 'رؤية السعودية 2030 — تحول السلامة الوطنية' })}
             </span>
           </div>
 
-          {/* Headline */}
-          <h1 className="text-center text-4xl sm:text-5xl lg:text-6xl font-bold text-balance leading-tight mb-4">
-            <span className="text-[#C5A028]">{t(ui.platformName)}</span>
+          <h1 className="text-center font-bold text-balance leading-none mb-3" style={{ color: '#FFFFFF', fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', letterSpacing: '-0.02em' }}>
+            {t(ui.platformName)}
           </h1>
-          <p className="text-center text-2xl sm:text-3xl font-semibold text-white/90 mb-6">
+          <p className="text-center font-semibold mb-4" style={{ color: 'rgba(255,255,255,0.5)', fontSize: 'clamp(1rem, 2.5vw, 1.375rem)' }}>
             {t(ui.tagline)}
           </p>
-          <p className="text-center text-white/70 max-w-2xl mx-auto text-base sm:text-lg mb-10 leading-relaxed">
+          <p className="text-center max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mb-10" style={{ color: 'rgba(255,255,255,0.4)' }}>
             {t(ui.subTagline)}
           </p>
 
-          {/* CTA buttons */}
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-3">
             <button
               onClick={() => setPortal('commercial')}
-              className="px-6 py-3 rounded-xl bg-[#C5A028] text-white font-semibold hover:bg-[#B8911F] transition-colors shadow-lg text-sm"
+              style={{ background: '#1E3A5F', color: '#FFFFFF', border: '1px solid rgba(255,255,255,0.15)' }}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold text-sm transition-opacity hover:opacity-80"
             >
               {t({ en: 'Explore Platform', ar: 'استكشف المنصة' })}
+              <ArrowIcon size={14} />
             </button>
             <button
               onClick={() => document.getElementById('portals-section')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-6 py-3 rounded-xl bg-white/10 border border-white/30 text-white font-semibold hover:bg-white/20 transition-colors text-sm"
+              style={{ background: 'transparent', color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.12)' }}
+              className="px-6 py-2.5 rounded-lg font-medium text-sm transition-colors hover:border-white/30"
             >
               {t({ en: 'View Portals', ar: 'عرض البوابات' })}
             </button>
           </div>
         </div>
-      </section>
 
-      {/* ─── Stats Bar ────────────────────────────────────────────── */}
-      <section className="bg-[#1B2F5B] border-t border-white/10">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
-            {stats.map((s, i) => (
-              <div key={i} className="text-center">
-                <div className="text-2xl sm:text-3xl font-bold text-[#C5A028] ltr-num">{s.value}</div>
-                <div className="text-white/60 text-xs sm:text-sm mt-1">{s.label}</div>
-              </div>
-            ))}
+        {/* Stats row — inset into hero bottom */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+              {stats.map((s, i) => (
+                <div key={i} className="text-center">
+                  <div className="font-bold ltr-num" style={{ color: '#FFFFFF', fontSize: 'clamp(1.25rem, 3vw, 2rem)' }}>{s.value}</div>
+                  <div className="text-xs mt-1 uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.35)' }}>{t(s.label)}</div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ─── Portal Cards ─────────────────────────────────────────── */}
-      <section id="portals-section" className="py-16 bg-gray-50">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-              {t({ en: 'Three Portals. One Data Spine.', ar: 'ثلاث بوابات. عمود بيانات واحد.' })}
-            </h2>
-            <p className="text-gray-500 max-w-xl mx-auto text-sm sm:text-base">
-              {t({ en: 'All portals operate on the same MDRE data layer — ensuring a Single Source of Truth across all stakeholders.', ar: 'جميع البوابات تعمل على طبقة بيانات MDRE نفسها — لضمان مصدر بيانات موحد لجميع الأطراف.' })}
-            </p>
-          </div>
+      <section id="portals-section" className="py-16 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-10">
+          <div className="section-label mb-2">{t({ en: 'Platform Portals', ar: 'بوابات المنصة' })}</div>
+          <h2 className="font-bold" style={{ color: TEXT_1, fontSize: 'clamp(1.25rem, 3vw, 1.75rem)', letterSpacing: '-0.01em' }}>
+            {t({ en: 'Three Portals. One Data Spine.', ar: 'ثلاث بوابات. عمود بيانات واحد.' })}
+          </h2>
+          <p className="text-sm mt-2 max-w-lg" style={{ color: TEXT_2 }}>
+            {t({ en: 'All portals operate on the same MDRE data layer — a single source of truth across all stakeholders.', ar: 'جميع البوابات تعمل على طبقة بيانات MDRE نفسها — مصدر بيانات موحد لجميع الأطراف.' })}
+          </p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            {[...portals, madaniCard].map((p) => {
-              const Icon = p.icon
-              return (
-                <div
-                  key={p.id}
-                  className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
-                >
-                  {/* Card header */}
-                  <div className={`bg-gradient-to-br ${p.color} p-6 text-white relative`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          {portals.map((p) => {
+            const Icon = p.icon
+            return (
+              <div
+                key={p.id}
+                style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderTop: `3px solid ${p.accent}` }}
+                className="rounded-xl overflow-hidden flex flex-col"
+              >
+                {/* Card head */}
+                <div className="p-5 pb-4">
+                  <div className="flex items-start justify-between mb-4">
+                    <div style={{ background: p.accentBg, borderRadius: 10, width: 40, height: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Icon size={18} style={{ color: p.accent }} />
+                    </div>
                     {p.locked && (
-                      <div className="absolute top-3 end-3 flex items-center gap-1 px-2 py-0.5 bg-black/30 rounded-full text-[10px] font-semibold text-white/80">
-                        <Lock className="w-2.5 h-2.5" />
-                        {t({ en: 'Internal Use Only', ar: 'داخلي فقط' })}
-                      </div>
+                      <span style={{ background: '#F3F4F6', color: TEXT_3, fontSize: 10 }} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-medium uppercase tracking-wider">
+                        <Lock size={9} />
+                        {t({ en: 'Internal', ar: 'داخلي' })}
+                      </span>
                     )}
                     {p.flag && (
-                      <div className="absolute top-3 end-3 flex items-center gap-1 px-2 py-0.5 bg-amber-400/90 rounded-full text-[10px] font-bold text-white animate-pulse">
+                      <span style={{ background: '#FEF3C7', color: '#92400E', fontSize: 10 }} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-semibold animate-pulse">
                         {t(p.flagLabel)}
-                      </div>
+                      </span>
                     )}
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                        <Icon className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-bold text-base">{p.title}</div>
-                        <div className="text-white/70 text-xs">{p.desc}</div>
-                      </div>
-                    </div>
-                    <div className="text-[#FFD700] font-semibold text-sm">{t(p.tagline)}</div>
                   </div>
-
-                  {/* Card body */}
-                  <div className="p-5 flex-1 flex flex-col">
-                    <ul className="space-y-2 flex-1">
-                      {p.caps.map((cap, j) => (
-                        <li key={j} className="flex items-start gap-2 text-sm text-gray-600">
-                          {p.locked
-                            ? <Lock className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
-                            : <CheckCircle2 className={`w-4 h-4 mt-0.5 flex-shrink-0 ${p.accentText}`} />
-                          }
-                          {t(cap)}
-                        </li>
-                      ))}
-                    </ul>
-                    <button
-                      onClick={() => setPortal(p.id)}
-                      className={`mt-5 w-full py-2.5 rounded-xl border-2 ${p.accentBorder} ${p.accentText} font-semibold text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2 ${
-                        p.locked ? 'opacity-70' : ''
-                      }`}
-                    >
-                      {p.locked ? <Lock className="w-4 h-4" /> : null}
-                      {p.locked ? t({ en: 'Coming Soon', ar: 'قريباً' }) : t(ui.enterPortal)}
-                      {!p.locked && <ArrowIcon className="w-4 h-4" />}
-                    </button>
-                  </div>
+                  <div className="font-bold text-sm mb-0.5" style={{ color: TEXT_1 }}>{p.title}</div>
+                  <div className="text-xs mb-3" style={{ color: TEXT_3 }}>{p.desc}</div>
+                  <div className="text-xs font-semibold" style={{ color: p.accent }}>{t(p.tagline)}</div>
                 </div>
-              )
-            })}
-          </div>
+
+                {/* Divider */}
+                <div style={{ height: 1, background: BORDER, margin: '0 20px' }} />
+
+                {/* Capabilities */}
+                <div className="p-5 pt-4 flex-1 flex flex-col">
+                  <ul className="space-y-2 flex-1 mb-5">
+                    {p.caps.map((cap, j) => (
+                      <li key={j} className="flex items-start gap-2 text-xs" style={{ color: TEXT_2 }}>
+                        {p.locked
+                          ? <Lock size={11} style={{ marginTop: 1, flexShrink: 0, color: TEXT_3 }} />
+                          : <CheckCircle2 size={11} style={{ marginTop: 1, flexShrink: 0, color: p.accent }} />
+                        }
+                        {t(cap)}
+                      </li>
+                    ))}
+                  </ul>
+                  <button
+                    onClick={() => setPortal(p.id)}
+                    style={{ border: `1px solid ${p.accent}`, color: p.accent, opacity: p.locked ? 0.5 : 1 }}
+                    className="w-full py-2 rounded-lg text-xs font-semibold transition-opacity hover:opacity-70 flex items-center justify-center gap-1.5"
+                  >
+                    {p.locked ? <Lock size={11} /> : null}
+                    {p.locked ? t({ en: 'Coming Soon', ar: 'قريباً' }) : t(ui.enterPortal)}
+                    {!p.locked && <ArrowIcon size={11} />}
+                  </button>
+                </div>
+              </div>
+            )
+          })}
         </div>
       </section>
 
       {/* ─── How It Works ─────────────────────────────────────────── */}
-      <section className="py-16 bg-white">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-              {t({ en: 'How the MDRE Works', ar: 'كيف يعمل MDRE' })}
+      <section style={{ borderTop: `1px solid ${BORDER}`, background: SURFACE }}>
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="mb-10">
+            <div className="section-label mb-2">{t({ en: 'How It Works', ar: 'آلية العمل' })}</div>
+            <h2 className="font-bold" style={{ color: TEXT_1, fontSize: 'clamp(1.125rem, 2.5vw, 1.5rem)', letterSpacing: '-0.01em' }}>
+              {t({ en: 'The MDRE Engine', ar: 'محرك MDRE' })}
             </h2>
-            <p className="text-gray-500 text-sm sm:text-base max-w-lg mx-auto">
-              {t({ en: 'The Madani Tech Dynamic Risk Engine — continuous, intelligent, automated.', ar: 'محرك المخاطر الديناميكي من مدني تك — مستمر، ذكي، آلي.' })}
+            <p className="text-sm mt-1" style={{ color: TEXT_2 }}>
+              {t({ en: 'Continuous, intelligent, automated risk computation.', ar: 'حوسبة مخاطر مستمرة، ذكية، آلية.' })}
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px" style={{ background: BORDER }}>
             {howItWorks.map((item, i) => {
               const Icon = item.icon
               return (
-                <div key={i} className="relative text-center">
-                  <div className="w-12 h-12 rounded-xl bg-[#1B2F5B] text-white flex items-center justify-center mx-auto mb-4">
-                    <Icon className="w-6 h-6" />
+                <div key={i} style={{ background: SURFACE }} className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div style={{ width: 36, height: 36, borderRadius: 8, background: '#F7F5F2', display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${BORDER}` }}>
+                      <Icon size={16} style={{ color: '#1E3A5F' }} />
+                    </div>
+                    <span className="font-mono font-bold text-xs" style={{ color: TEXT_3 }}>{item.step}</span>
                   </div>
-                  <div className="absolute top-5 start-1/2 w-full h-px bg-gray-200 -z-0 hidden lg:block" />
-                  <h3 className="font-semibold text-gray-900 mb-2 text-sm">{t(item.title)}</h3>
-                  <p className="text-gray-500 text-xs leading-relaxed">{t(item.desc)}</p>
-                  <div className="absolute -top-1 -start-1 w-6 h-6 rounded-full bg-[#C5A028] text-white text-xs font-bold flex items-center justify-center">
-                    {i + 1}
-                  </div>
+                  <h3 className="font-semibold text-sm mb-2" style={{ color: TEXT_1 }}>{t(item.title)}</h3>
+                  <p className="text-xs leading-relaxed" style={{ color: TEXT_2 }}>{t(item.desc)}</p>
                 </div>
               )
             })}
@@ -274,26 +281,19 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ─── Risk Bands Visual ────────────────────────────────────── */}
-      <section className="py-12 bg-gray-50 border-y border-gray-100">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-center text-xl font-bold text-gray-900 mb-8">
-            {t({ en: 'MDRE Risk Score Bands', ar: 'نطاقات درجة المخاطر في MDRE' })}
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { range: '0–49', label: { en: 'LOW', ar: 'منخفض' }, bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', dot: 'bg-green-500', action: { en: 'Routine monitoring', ar: 'مراقبة روتينية' } },
-              { range: '50–69', label: { en: 'MEDIUM', ar: 'متوسط' }, bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-800', dot: 'bg-amber-500', action: { en: 'Owner notified', ar: 'إشعار المالك' } },
-              { range: '70–84', label: { en: 'HIGH', ar: 'مرتفع' }, bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', dot: 'bg-red-500', action: { en: '24-hour SLA', ar: 'SLA 24 ساعة' } },
-              { range: '85–100', label: { en: 'CRITICAL', ar: 'حرج' }, bg: 'bg-red-950', border: 'border-red-900', text: 'text-white', dot: 'bg-red-400', action: { en: '4-hour SLA', ar: 'SLA 4 ساعات' } },
-            ].map((b) => (
-              <div key={b.range} className={`${b.bg} ${b.border} border rounded-xl p-4 text-center`}>
-                <div className={`inline-flex items-center gap-1.5 mb-2`}>
-                  <div className={`w-2.5 h-2.5 rounded-full ${b.dot}`} />
-                  <span className={`font-bold text-sm ${b.text}`}>{t(b.label)}</span>
+      {/* ─── Risk Bands ───────────────────────────────────────────── */}
+      <section style={{ borderTop: `1px solid ${BORDER}` }}>
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="section-label mb-6 text-center">{t({ en: 'MDRE Risk Score Bands', ar: 'نطاقات درجة المخاطر في MDRE' })}</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {riskBands.map((b) => (
+              <div key={b.range} style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderTop: `3px solid ${b.color}` }} className="rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: b.color }} />
+                  <span className="font-bold text-xs uppercase tracking-wider" style={{ color: TEXT_1 }}>{t(b.label)}</span>
                 </div>
-                <div className={`text-xl font-mono font-bold ${b.text} mb-1`}>{b.range}</div>
-                <div className={`text-xs ${b.text} opacity-80`}>{t(b.action)}</div>
+                <div className="font-mono font-bold text-xl ltr-num mb-1" style={{ color: b.color }}>{b.range}</div>
+                <div className="text-xs" style={{ color: TEXT_3 }}>{t(b.action)}</div>
               </div>
             ))}
           </div>
@@ -301,14 +301,15 @@ export default function Landing() {
       </section>
 
       {/* ─── Compliance Badges ────────────────────────────────────── */}
-      <section className="py-10 bg-white">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap justify-center items-center gap-4">
+      <section style={{ borderTop: `1px solid ${BORDER}`, background: SURFACE }}>
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="section-label text-center mb-5">{t({ en: 'Compliance & Standards', ar: 'الامتثال والمعايير' })}</div>
+          <div className="flex flex-wrap justify-center items-center gap-3">
             {badges.map((b, i) => {
               const Icon = b.icon
               return (
-                <div key={i} className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium bg-gray-50">
-                  <Icon className="w-4 h-4 text-[#1B2F5B]" />
+                <div key={i} style={{ background: '#F7F5F2', border: `1px solid ${BORDER}`, color: TEXT_2 }} className="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium">
+                  <Icon size={14} style={{ color: '#1E3A5F' }} />
                   {b.label}
                 </div>
               )
@@ -318,13 +319,13 @@ export default function Landing() {
       </section>
 
       {/* ─── Footer ───────────────────────────────────────────────── */}
-      <footer className="bg-[#0F1F3D] text-white/60 py-8">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="text-[#C5A028] font-semibold mb-1">{t(ui.madaniTech)}</div>
-          <div className="text-xs">
+      <footer style={{ borderTop: `1px solid ${BORDER}`, background: '#0F1C35' }}>
+        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">
+          <div className="font-semibold mb-1" style={{ color: 'rgba(255,255,255,0.6)' }}>{t(ui.madaniTech)}</div>
+          <div className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>
             {t({ en: 'A proposed Public-Private Partnership entity under feasibility study — Kingdom of Saudi Arabia', ar: 'كيان شراكة بين القطاعين العام والخاص مقترح قيد دراسة الجدوى — المملكة العربية السعودية' })}
           </div>
-          <div className="text-xs mt-2 text-white/30">
+          <div className="text-xs mt-2" style={{ color: 'rgba(255,255,255,0.15)' }}>
             {t({ en: '© 2025 Madani Tech. All rights reserved.', ar: '© 2025 مدني تك. جميع الحقوق محفوظة.' })}
           </div>
         </div>

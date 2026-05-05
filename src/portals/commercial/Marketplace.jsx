@@ -4,11 +4,11 @@ import { products } from '../../data/seed'
 import { ShoppingCart, Package, Check, Truck, Clock, X } from 'lucide-react'
 
 const SURFACE = '#FFFFFF'
-const ELEVATED = '#F3F4F6'
-const BORDER = '#E5E7EB'
-const GOLD = '#1B4F72'
-const TEXT_PRIMARY = '#111827'
-const TEXT_SECONDARY = '#6B7280'
+const ELEVATED = '#F7F5F2'
+const BORDER = 'rgba(0,0,0,0.07)'
+const GOLD = '#1E3A5F'
+const TEXT_PRIMARY = '#18181B'
+const TEXT_SECONDARY = '#52525B'
 
 const ORDER_STATUS = {
   delivered: { label: { en: 'Delivered', ar: 'تم التسليم' }, color: '#22C55E', icon: Check },
@@ -108,7 +108,7 @@ export default function Marketplace({ t, lang, isRTL, buildings, orders, addToas
                 ) : (
                   <button
                     onClick={() => addToCart(product)}
-                    style={{ background: GOLD, color: '#0A0E1A' }}
+                    style={{ background: GOLD, color: 'white' }}
                     className="text-xs px-3 py-1.5 rounded-lg font-semibold"
                   >
                     {t({ en: 'Add to Cart', ar: 'أضف للسلة' })}
@@ -186,7 +186,7 @@ export default function Marketplace({ t, lang, isRTL, buildings, orders, addToas
               <div style={{ borderTop: `1px solid ${BORDER}` }} className="p-4">
                 <button
                   onClick={checkout}
-                  style={{ background: GOLD, color: '#0A0E1A' }}
+                  style={{ background: GOLD, color: 'white' }}
                   className="w-full py-2.5 rounded-lg text-sm font-bold"
                 >
                   {t({ en: 'Place Order', ar: 'تقديم الطلب' })}

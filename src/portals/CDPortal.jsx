@@ -59,10 +59,10 @@ export default function CDPortal() {
   const moduleProps = { t, lang, addToast }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen flex flex-col" style={{ background: '#F7F5F2' }} dir={isRTL ? 'rtl' : 'ltr'}>
 
       {/* ─── Top Bar ─────────────────────────────────────── */}
-      <header className="sticky top-0 z-40 bg-[#991B1B] text-white shadow-lg flex items-center gap-2 px-3 sm:px-4 h-14">
+      <header className="sticky top-0 z-40 bg-[#991B1B] text-white flex items-center gap-2 px-3 sm:px-4 h-14">
         <button className="lg:hidden p-1.5 rounded hover:bg-white/10 transition-colors"
           onClick={() => setMobileOpen(v => !v)}>
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -89,7 +89,7 @@ export default function CDPortal() {
             <ChevronDown className="w-3.5 h-3.5 flex-shrink-0" />
           </button>
           {tierOpen && (
-            <div className="absolute top-full mt-1 end-0 w-64 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50">
+            <div className="absolute top-full mt-1 end-0 w-64 bg-white rounded-xl py-1 z-50" style={{ border: '1px solid rgba(0,0,0,0.07)' }}>
               {TIERS.map(tier_ => (
                 <button key={tier_.id} onClick={() => { setTier(tier_.id); setTierOpen(false) }}
                   className={`w-full text-start px-4 py-2.5 text-sm transition-colors ${
@@ -131,9 +131,9 @@ export default function CDPortal() {
       {tier === 2 && (
         <div className="flex flex-1 min-h-0">
           {/* Desktop sidebar */}
-          <aside className={`hidden lg:flex flex-col bg-white border-e border-gray-100 shadow-sm transition-all duration-200 ${
+          <aside className={`hidden lg:flex flex-col bg-white transition-all duration-200 ${
             collapsed ? 'w-16' : 'w-56'
-          }`}>
+          }`} style={{ borderInlineEnd: '1px solid rgba(0,0,0,0.07)' }}>
             <button onClick={() => setCollapsed(v => !v)}
               className="flex items-center justify-center h-10 mt-2 mb-1 mx-2 rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors text-xs gap-1.5">
               {collapsed
@@ -150,7 +150,7 @@ export default function CDPortal() {
                   <button key={id} onClick={() => setModule(id)}
                     title={collapsed ? t(label) : undefined}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                      active ? 'bg-[#991B1B] text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                      active ? 'bg-[#991B1B] text-white' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                     } ${collapsed ? 'justify-center' : ''}`}>
                     <Icon className="w-4 h-4 flex-shrink-0" />
                     {!collapsed && <span className="flex-1 text-start truncate">{t(label)}</span>}
@@ -165,7 +165,7 @@ export default function CDPortal() {
             </nav>
             {!collapsed && (
               <div className="px-3 pb-4">
-                <div className="px-3 py-2 bg-gray-50 rounded-xl">
+                <div className="px-3 py-2 rounded-xl" style={{ background: '#F7F5F2', border: '1px solid rgba(0,0,0,0.07)' }}>
                   <div className="text-[10px] text-gray-400 mb-0.5">{t({ en: 'Active Tier', ar: 'الطبقة النشطة' })}</div>
                   <div className="text-xs font-semibold text-gray-700 truncate">{t(activeTier.label)}</div>
                 </div>
@@ -177,8 +177,8 @@ export default function CDPortal() {
           {mobileOpen && (
             <div className="lg:hidden fixed inset-0 z-30 flex" dir={isRTL ? 'rtl' : 'ltr'}>
               <div className="fixed inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-              <aside className="relative w-64 bg-white shadow-xl flex flex-col z-40">
-                <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
+              <aside className="relative w-64 bg-white flex flex-col z-40" style={{ border: '1px solid rgba(0,0,0,0.07)' }}>
+                <div className="flex items-center gap-2 px-4 py-3" style={{ borderBottom: '1px solid rgba(0,0,0,0.07)' }}>
                   <Shield className="w-4 h-4 text-[#991B1B]" />
                   <span className="font-bold text-sm text-gray-900">{t({ en: 'Civil Defense', ar: 'الدفاع المدني' })}</span>
                 </div>
@@ -189,7 +189,7 @@ export default function CDPortal() {
                     return (
                       <button key={id} onClick={() => { setModule(id); setMobileOpen(false) }}
                         className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                          active ? 'bg-[#991B1B] text-white shadow-sm' : 'text-gray-600 hover:bg-gray-50'
+                          active ? 'bg-[#991B1B] text-white' : 'text-gray-600 hover:bg-gray-50'
                         }`}>
                         <Icon className="w-4 h-4 flex-shrink-0" />
                         <span className="flex-1 text-start">{t(label)}</span>
@@ -202,7 +202,7 @@ export default function CDPortal() {
                     )
                   })}
                 </nav>
-                <div className="px-3 pb-4 pt-2 border-t border-gray-100">
+                <div className="px-3 pb-4 pt-2" style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}>
                   <div className="text-[10px] text-gray-400 mb-1 px-1">{t({ en: 'Switch Tier', ar: 'تبديل الطبقة' })}</div>
                   {TIERS.map(tier_ => (
                     <button key={tier_.id} onClick={() => { setTier(tier_.id); setMobileOpen(false) }}

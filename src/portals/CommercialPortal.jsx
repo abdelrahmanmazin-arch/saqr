@@ -17,13 +17,13 @@ import {
   Globe, ChevronLeft, ChevronRight,
 } from 'lucide-react'
 
-const BG = '#F9FAFB'
+const BG = '#F7F5F2'
 const SURFACE = '#FFFFFF'
-const ELEVATED = '#F3F4F6'
-const BORDER = '#E5E7EB'
-const GOLD = '#1B4F72'
-const TEXT_PRIMARY = '#111827'
-const TEXT_SECONDARY = '#6B7280'
+const ELEVATED = '#F7F5F2'
+const BORDER = 'rgba(0,0,0,0.07)'
+const GOLD = '#1E3A5F'
+const TEXT_PRIMARY = '#18181B'
+const TEXT_SECONDARY = '#52525B'
 
 const NAV_ITEMS = [
   { id: 'dashboard',       icon: LayoutDashboard, label: { en: 'Dashboard', ar: 'لوحة التحكم' } },
@@ -159,7 +159,7 @@ export default function CommercialPortal() {
       {/* Toast Stack */}
       <div className="fixed bottom-4 end-4 z-50 flex flex-col gap-2 pointer-events-none">
         {toasts.map(toast => (
-          <div key={toast.id} style={{ background: ELEVATED, borderLeft: `4px solid ${toastBorderColor[toast.type] || '#3B82F6'}`, color: TEXT_PRIMARY, maxWidth: 340, pointerEvents: 'auto' }} className="px-4 py-3 rounded-lg shadow-2xl text-sm">
+          <div key={toast.id} style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderLeft: `3px solid ${toastBorderColor[toast.type] || '#3B82F6'}`, color: TEXT_PRIMARY, maxWidth: 340, pointerEvents: 'auto' }} className="px-4 py-3 rounded-lg text-sm">
             {toast.msg}
           </div>
         ))}

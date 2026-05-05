@@ -66,7 +66,7 @@ export default function StationView({ t, lang, addToast }) {
           {TABS.map(({ id, icon: Icon, label }) => (
             <button key={id} onClick={() => setTab(id)}
               className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold transition-all ${
-                tab === id ? 'bg-white text-[#991B1B] shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                tab === id ? 'bg-white text-[#991B1B]' : 'text-gray-500 hover:text-gray-700'
               }`}>
               <Icon className="w-3.5 h-3.5" />
               {t(label)}
@@ -122,7 +122,7 @@ export default function StationView({ t, lang, addToast }) {
         {tab === 'inspection' && !activeForm && (
           <div className="space-y-3">
             {MY_QUEUE.map(item => (
-              <div key={item.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+              <div key={item.id} className="bg-white rounded-xl border border-gray-100 p-4">
                 <div className="flex items-start justify-between gap-2 mb-2">
                   <div>
                     <div className="font-bold text-gray-900 text-sm">{t(item.buildingName)}</div>
@@ -212,7 +212,7 @@ export default function StationView({ t, lang, addToast }) {
 
         {/* Submission confirmation */}
         {tab === 'inspection' && activeForm && formStep === 1 && (
-          <div className="text-center py-8 bg-white rounded-xl border border-gray-100 shadow-sm px-6">
+          <div className="text-center py-8 bg-white rounded-xl border border-gray-100 px-6">
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
@@ -231,7 +231,7 @@ export default function StationView({ t, lang, addToast }) {
 
         {/* ── My Unit Status ── */}
         {tab === 'unit' && (
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-4">
+          <div className="bg-white rounded-xl border border-gray-100 p-5 space-y-4">
             <div className="flex items-start justify-between">
               <div>
                 <div className="font-bold text-gray-900">{MY_UNIT.callsign}</div>

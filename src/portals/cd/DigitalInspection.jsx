@@ -92,7 +92,7 @@ function InspectionWizard({ item, onClose, addToast, t, lang }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 flex-shrink-0">
           <div>
@@ -406,7 +406,7 @@ function InspectionWizard({ item, onClose, addToast, t, lang }) {
       {/* Enforcement chain modal */}
       {showEnforcement && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-5">
+          <div className="bg-white rounded-2xl w-full max-w-sm p-5">
             <div className="flex items-center justify-between mb-3">
               <div className="font-bold text-red-900 flex items-center gap-1.5">
                 <Shield className="w-4 h-4" />{t({ en: 'Enforcement Chain', ar: 'سلسلة التطبيق' })}
@@ -455,7 +455,7 @@ export default function DigitalInspection({ t, lang, addToast }) {
       <h1 className="text-xl font-bold text-gray-900">{t({ en: 'Digital Inspection', ar: 'الفحص الرقمي' })}</h1>
 
       {/* Inspection Queue */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-bold text-gray-900">{t({ en: 'Inspection Queue', ar: 'طابور الفحص' })}</h2>
           <span className="text-xs text-gray-400">{queue.length} {t({ en: 'pending', ar: 'معلق' })}</span>
@@ -496,7 +496,7 @@ export default function DigitalInspection({ t, lang, addToast }) {
       </div>
 
       {/* AI Auto-Violations */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100">
           <h2 className="font-bold text-gray-900">{t({ en: 'AI Auto-Violations', ar: 'المخالفات الآلية بالذكاء الاصطناعي' })}</h2>
         </div>

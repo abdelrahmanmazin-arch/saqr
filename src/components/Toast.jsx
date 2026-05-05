@@ -15,7 +15,7 @@ export function ToastStack({ toasts, onClose }) {
       {toasts.map(toast => (
         <div
           key={toast.id}
-          className={`flex items-start gap-3 px-4 py-3 rounded-lg shadow-lg pointer-events-auto
+          className={`flex items-start gap-3 px-4 py-3 rounded-lg pointer-events-auto
             ${TYPE_STYLES[toast.type] ?? TYPE_STYLES.info}`}
         >
           <p className="flex-1 text-sm font-medium leading-snug">{toast.msg}</p>

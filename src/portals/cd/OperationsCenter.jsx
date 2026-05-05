@@ -87,7 +87,7 @@ const CITY_BLOCKS = [
 function VolunteerMap({ t, lang, volunteersAlerted, volsAccepted }) {
   const isRTL = lang === 'ar'
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+    <div className="bg-white rounded-xl border border-gray-100 p-4">
       <div className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
         <Users className="w-4 h-4 text-purple-600" />
         {t({ en: 'Volunteer Proximity Map', ar: 'خريطة قرب المتطوعين' })}
@@ -145,7 +145,7 @@ function DispatchModal({ incident, units, onDispatch, onClose, t }) {
   const unit = units.find(u => u.id === selected)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl w-full max-w-md" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="font-bold text-gray-900">{t({en:'Dispatch Unit',ar:'إرسال وحدة'})}</div>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400"><X className="w-4 h-4" /></button>
@@ -326,7 +326,7 @@ export default function OperationsCenter({ t, lang, addToast }) {
           {label:{en:'Units Available',ar:'الوحدات المتاحة'}, value:availUnits,  color:'text-green-600'},
           {label:{en:'Avg Response',ar:'متوسط الاستجابة'},    value:'8.3m',      color:'text-blue-600'},
         ].map((k,i) => (
-          <div key={i} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
             <div className="text-xs text-gray-500 mb-1">{t(k.label)}</div>
             <div className={`text-2xl font-bold font-mono ${k.color}`}>{k.value}</div>
           </div>
@@ -350,7 +350,7 @@ export default function OperationsCenter({ t, lang, addToast }) {
       {/* Volunteer Map + Unit Status */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <VolunteerMap t={t} lang={lang} volunteersAlerted={volsAlerted} volsAccepted={volsAccepted} />
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+        <div className="bg-white rounded-xl border border-gray-100 p-4">
           <div className="font-semibold text-gray-800 text-sm mb-3 flex items-center gap-2">
             <Cpu className="w-4 h-4 text-blue-600" />
             {t({en:'Field Unit Status',ar:'حالة الوحدات الميدانية'})}
@@ -382,7 +382,7 @@ export default function OperationsCenter({ t, lang, addToast }) {
       </div>
 
       {/* Incident Board */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-bold text-gray-900">{t({en:'Incident Board',ar:'لوحة الحوادث'})}</h2>
           <span className="text-xs text-gray-400">{activeCount} {t({en:'active',ar:'نشطة'})}</span>

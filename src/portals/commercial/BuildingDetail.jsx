@@ -5,11 +5,11 @@ import { maintenanceReports, commercialViolations, buildingSensors, riskTrends, 
 import { Building2, Wifi, WifiOff, AlertTriangle, CheckCircle2, Clock, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 
 const SURFACE = '#FFFFFF'
-const ELEVATED = '#F3F4F6'
-const BORDER = '#E5E7EB'
-const GOLD = '#1B4F72'
-const TEXT_PRIMARY = '#111827'
-const TEXT_SECONDARY = '#6B7280'
+const ELEVATED = '#F7F5F2'
+const BORDER = 'rgba(0,0,0,0.07)'
+const GOLD = '#1E3A5F'
+const TEXT_PRIMARY = '#18181B'
+const TEXT_SECONDARY = '#52525B'
 
 function RiskColor(score) {
   if (score >= 85) return '#EF4444'
@@ -342,7 +342,7 @@ export default function BuildingDetail({ t, lang, isRTL, buildings, building, on
                   />
                   <button
                     onClick={submitReport}
-                    style={{ background: GOLD, color: '#0A0E1A' }}
+                    style={{ background: GOLD, color: 'white' }}
                     className="px-4 py-2 rounded-lg text-sm font-semibold"
                   >
                     {t({ en: 'Submit Report', ar: 'تقديم التقرير' })}

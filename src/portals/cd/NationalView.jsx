@@ -97,7 +97,7 @@ export default function NationalView({ t, lang }) {
         {/* KPI grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
           {kpis.map((k, i) => (
-            <div key={i} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+            <div key={i} className="bg-white rounded-xl border border-gray-100 p-4">
               <div className="text-xs text-gray-500 mb-1 leading-tight">{t(k.label)}</div>
               <div className={`text-2xl font-bold font-mono ${k.color}`}>{k.value}</div>
               <div className="text-[10px] text-gray-400 mt-0.5">{t(k.sub)}</div>
@@ -108,15 +108,15 @@ export default function NationalView({ t, lang }) {
         {/* Charts row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Risk Distribution by Region */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div className="bg-white rounded-xl border border-gray-100 p-4">
             <div className="font-bold text-gray-900 text-sm mb-4">{t({ en: 'Risk Score by Region', ar: 'درجة المخاطر حسب المنطقة' })}</div>
             <ResponsiveContainer width="100%" height={200}>
               <BarChart data={regionChartData} margin={{ top: 4, right: 8, left: -24, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" vertical={false} />
                 <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#6B7280' }} axisLine={false} tickLine={false} />
                 <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: '#6B7280' }} axisLine={false} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, fontSize: 12 }}
+                  contentStyle={{ background: '#fff', border: '1px solid rgba(0,0,0,0.07)', borderRadius: 8, fontSize: 12 }}
                   formatter={(val) => [val, t({ en: 'Risk Score', ar: 'درجة المخاطر' })]}
                 />
                 <Bar dataKey="riskAvg" shape={<CustomBar />} />
@@ -130,15 +130,15 @@ export default function NationalView({ t, lang }) {
           </div>
 
           {/* Compliance Trend */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+          <div className="bg-white rounded-xl border border-gray-100 p-4">
             <div className="font-bold text-gray-900 text-sm mb-4">{t({ en: 'Compliance Trend (6 Months)', ar: 'اتجاه الامتثال (6 أشهر)' })}</div>
             <ResponsiveContainer width="100%" height={200}>
               <LineChart data={COMPLIANCE_TREND} margin={{ top: 4, right: 8, left: -24, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" />
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#6B7280' }} axisLine={false} tickLine={false} />
                 <YAxis domain={[75, 100]} tick={{ fontSize: 10, fill: '#6B7280' }} axisLine={false} tickLine={false} />
                 <Tooltip
-                  contentStyle={{ background: '#fff', border: '1px solid #E5E7EB', borderRadius: 8, fontSize: 12 }}
+                  contentStyle={{ background: '#fff', border: '1px solid rgba(0,0,0,0.07)', borderRadius: 8, fontSize: 12 }}
                   formatter={(val, name) => [`${val}%`, name.charAt(0).toUpperCase() + name.slice(1)]}
                 />
                 <Legend wrapperStyle={{ fontSize: 10, color: '#6B7280' }} />
@@ -152,7 +152,7 @@ export default function NationalView({ t, lang }) {
         </div>
 
         {/* Top-Risk Buildings */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="px-5 py-3.5 border-b border-gray-100 flex items-center justify-between">
             <h2 className="font-bold text-gray-900">{t({ en: 'Top-Risk Buildings (National)', ar: 'المباني الأعلى خطورة (وطنياً)' })}</h2>
             <span className="text-xs text-gray-400 bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-semibold">
@@ -198,7 +198,7 @@ export default function NationalView({ t, lang }) {
         </div>
 
         {/* Regional breakdown */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="px-5 py-3.5 border-b border-gray-100">
             <h2 className="font-bold text-gray-900">{t({ en: 'Regional Breakdown', ar: 'التفصيل الإقليمي' })}</h2>
           </div>
@@ -243,7 +243,7 @@ export default function NationalView({ t, lang }) {
         </div>
 
         {/* National alert feed */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
           <div className="px-5 py-3.5 border-b border-gray-100">
             <h2 className="font-bold text-gray-900">{t({ en: 'National Alert Feed', ar: 'التنبيهات الوطنية' })}</h2>
           </div>

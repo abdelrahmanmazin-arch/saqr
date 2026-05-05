@@ -32,7 +32,7 @@ export default function InsurancePortal() {
   const highRiskCount = enrichedPolicies.filter(p => p.riskScore >= 70).length
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col" dir={isRTL ? 'rtl' : 'ltr'}>
+    <div className="min-h-screen flex flex-col" style={{ background: '#F7F5F2' }} dir={isRTL ? 'rtl' : 'ltr'}>
       <Header onNavClick={setSection} activeSection={section} />
 
       {/* Mobile nav */}
@@ -107,7 +107,7 @@ export default function InsurancePortal() {
             )}
 
             {/* Policy table */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-100">
@@ -243,7 +243,7 @@ function PricingSection({ policies, selectedPolicy, setSelectedPolicy, scenario,
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Policy Selector */}
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+        <div className="bg-white rounded-xl border border-gray-100 p-4">
           <h2 className="font-semibold text-gray-900 text-sm mb-3">{t({ en: 'Select Policy', ar: 'اختر البوليصة' })}</h2>
           <div className="space-y-2">
             {policies.map(p => (
@@ -269,7 +269,7 @@ function PricingSection({ policies, selectedPolicy, setSelectedPolicy, scenario,
         {/* Main pricing view */}
         <div className="lg:col-span-2 space-y-5">
           {/* Policy header */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
             <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
               <div>
                 <h2 className="font-bold text-gray-900 text-lg">{selected.building && t(selected.building.name)}</h2>
@@ -299,7 +299,7 @@ function PricingSection({ policies, selectedPolicy, setSelectedPolicy, scenario,
           </div>
 
           {/* Pricing Scenarios */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
             <h3 className="font-semibold text-gray-900 mb-4">{t({ en: 'Pricing Scenarios', ar: 'سيناريوهات التسعير' })}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {Object.entries(scenarios).map(([key, sc]) => (
@@ -322,7 +322,7 @@ function PricingSection({ policies, selectedPolicy, setSelectedPolicy, scenario,
           </div>
 
           {/* Risk factor breakdown */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <div className="bg-white rounded-xl border border-gray-100 p-5">
             <h3 className="font-semibold text-gray-900 mb-4">{t({ en: 'Risk Factor Breakdown (5-Factor Model)', ar: 'تفاصيل عوامل المخاطر (نموذج 5 عوامل)' })}</h3>
             <div className="space-y-3">
               {Object.entries(selected.riskFactors).map(([key, rf]) => (
@@ -383,7 +383,7 @@ function LossDataSection({ incidents, buildings, policies, t, lang }) {
       </div>
 
       {/* Incident Register */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
         <div className="px-5 py-4 border-b border-gray-100">
           <h2 className="font-semibold text-gray-900">{t({ en: 'Incident Register', ar: 'سجل الحوادث' })}</h2>
         </div>
