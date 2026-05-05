@@ -32,7 +32,7 @@ export default function StationView({ t, lang, addToast }) {
   const [checks, setChecks] = useState({})
   const [formStep, setFormStep] = useState(0) // 0=form, 1=submitted
 
-  const checklist = activeForm ? getChecklistForSBC(activeForm.sbcType) : []
+  const checklist = activeForm ? (getChecklistForSBC(activeForm.sbcType).checkpoints ?? []) : []
   const passed  = Object.values(checks).filter(v => v === 'pass').length
   const failed  = Object.values(checks).filter(v => v === 'fail').length
   const total   = checklist.length
