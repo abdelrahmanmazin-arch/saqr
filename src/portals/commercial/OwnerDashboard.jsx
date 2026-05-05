@@ -3,13 +3,12 @@ import { getRiskBand, getRiskColor, daysUntil } from '../../data/seed'
 import { scheduledTasks, riskTrends } from '../../data/commercialData'
 import { AlertTriangle, TrendingUp, TrendingDown, Minus, Building2, Zap, Clock, CheckSquare, ChevronRight, Play } from 'lucide-react'
 
-const BG = '#0A0E1A'
-const SURFACE = '#111827'
-const ELEVATED = '#1F2937'
-const BORDER = '#2D3748'
-const GOLD = '#C9A84C'
-const TEXT_PRIMARY = '#F9FAFB'
-const TEXT_SECONDARY = '#9CA3AF'
+const SURFACE = '#FFFFFF'
+const ELEVATED = '#F3F4F6'
+const BORDER = '#E5E7EB'
+const GOLD = '#1B4F72'
+const TEXT_PRIMARY = '#111827'
+const TEXT_SECONDARY = '#6B7280'
 
 function RiskColor(score) {
   if (score >= 85) return '#EF4444'
@@ -175,7 +174,7 @@ export default function OwnerDashboard({ t, lang, isRTL, buildings, owner, onSel
                 key={bld.id}
                 onClick={() => onSelectBuilding(bld)}
                 style={{ background: SURFACE, border: `1px solid ${BORDER}` }}
-                className="rounded-xl p-4 text-start hover:border-[#4B5563] transition-colors"
+                className="rounded-xl p-4 text-start hover:border-gray-300 transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div>

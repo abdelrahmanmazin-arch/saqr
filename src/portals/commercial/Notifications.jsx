@@ -2,11 +2,11 @@ import { useState } from 'react'
 import { daysUntil } from '../../data/seed'
 import { Bell, CheckCircle2, AlertTriangle, Info, CheckSquare } from 'lucide-react'
 
-const SURFACE = '#111827'
-const ELEVATED = '#1F2937'
-const BORDER = '#2D3748'
-const TEXT_PRIMARY = '#F9FAFB'
-const TEXT_SECONDARY = '#9CA3AF'
+const SURFACE = '#FFFFFF'
+const ELEVATED = '#F3F4F6'
+const BORDER = '#E5E7EB'
+const TEXT_PRIMARY = '#111827'
+const TEXT_SECONDARY = '#6B7280'
 
 const TYPE_CONFIG = {
   critical: { color: '#EF4444', icon: AlertTriangle },
@@ -53,8 +53,8 @@ export default function Notifications({ t, lang, isRTL, buildings, notifications
             key={tb.id}
             onClick={() => setActiveTab(tb.id)}
             style={{
-              color: activeTab === tb.id ? '#C9A84C' : TEXT_SECONDARY,
-              borderBottom: `2px solid ${activeTab === tb.id ? '#C9A84C' : 'transparent'}`,
+              color: activeTab === tb.id ? '#1B4F72' : TEXT_SECONDARY,
+              borderBottom: `2px solid ${activeTab === tb.id ? '#1B4F72' : 'transparent'}`,
               marginBottom: -1,
             }}
             className="px-4 py-2 text-sm font-medium transition-colors"
@@ -68,7 +68,7 @@ export default function Notifications({ t, lang, isRTL, buildings, notifications
         <>
           <div className="flex justify-end">
             {unread > 0 && (
-              <button onClick={markAllRead} style={{ color: '#C9A84C' }} className="text-xs hover:underline">
+              <button onClick={markAllRead} style={{ color: '#1B4F72' }} className="text-xs hover:underline">
                 {t({ en: 'Mark all read', ar: 'تحديد الكل كمقروء' })}
               </button>
             )}
@@ -87,11 +87,11 @@ export default function Notifications({ t, lang, isRTL, buildings, notifications
                       key={n.id}
                       onClick={() => markRead(n.id)}
                       style={{
-                        background: n.read ? 'transparent' : '#1A2035',
+                        background: n.read ? 'transparent' : '#EFF6FF',
                         borderLeft: `3px solid ${cfg.color}`,
                         cursor: n.read ? 'default' : 'pointer',
                       }}
-                      className="px-4 py-3 transition-colors hover:bg-[#1F2937]"
+                      className="px-4 py-3 transition-colors hover:bg-gray-50"
                     >
                       <div className="flex items-start gap-3">
                         <Icon size={14} style={{ color: cfg.color, marginTop: 2, flexShrink: 0 }} />

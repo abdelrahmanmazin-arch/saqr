@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { FileText, Download, TrendingUp, TrendingDown, ChevronRight, X } from 'lucide-react'
 
-const SURFACE = '#111827'
-const ELEVATED = '#1F2937'
-const BORDER = '#2D3748'
-const GOLD = '#C9A84C'
-const TEXT_PRIMARY = '#F9FAFB'
-const TEXT_SECONDARY = '#9CA3AF'
+const SURFACE = '#FFFFFF'
+const ELEVATED = '#F3F4F6'
+const BORDER = '#E5E7EB'
+const GOLD = '#1B4F72'
+const TEXT_PRIMARY = '#111827'
+const TEXT_SECONDARY = '#6B7280'
 
 const TYPE_LABEL = {
   'monthly-risk':        { en: 'Monthly Risk Report', ar: 'تقرير المخاطر الشهري' },

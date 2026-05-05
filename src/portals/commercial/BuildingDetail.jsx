@@ -4,12 +4,12 @@ import { daysUntil, formatSAR } from '../../data/seed'
 import { maintenanceReports, commercialViolations, buildingSensors, riskTrends, scheduledTasks } from '../../data/commercialData'
 import { Building2, Wifi, WifiOff, AlertTriangle, CheckCircle2, Clock, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 
-const SURFACE = '#111827'
-const ELEVATED = '#1F2937'
-const BORDER = '#2D3748'
-const GOLD = '#C9A84C'
-const TEXT_PRIMARY = '#F9FAFB'
-const TEXT_SECONDARY = '#9CA3AF'
+const SURFACE = '#FFFFFF'
+const ELEVATED = '#F3F4F6'
+const BORDER = '#E5E7EB'
+const GOLD = '#1B4F72'
+const TEXT_PRIMARY = '#111827'
+const TEXT_SECONDARY = '#6B7280'
 
 function RiskColor(score) {
   if (score >= 85) return '#EF4444'
@@ -69,7 +69,7 @@ export default function BuildingDetail({ t, lang, isRTL, buildings, building, on
               key={b.id}
               onClick={() => onSelectBuilding(b)}
               style={{ background: SURFACE, border: `1px solid ${BORDER}` }}
-              className="rounded-xl p-4 text-start hover:border-[#4B5563] transition-colors"
+              className="rounded-xl p-4 text-start hover:border-gray-300 transition-colors"
             >
               <div style={{ color: TEXT_PRIMARY }} className="font-semibold">{t(b.name)}</div>
               <div style={{ color: TEXT_SECONDARY }} className="text-xs mt-1">{b.sbcType} · {t(b.region)}</div>
@@ -110,7 +110,7 @@ export default function BuildingDetail({ t, lang, isRTL, buildings, building, on
       <div style={{ background: SURFACE, borderBottom: `1px solid ${BORDER}` }} className="p-6">
         <div className="flex items-start justify-between flex-wrap gap-3">
           <div>
-            <button onClick={() => onSelectBuilding(null)} style={{ color: TEXT_SECONDARY }} className="text-xs mb-1 hover:text-[#F9FAFB] flex items-center gap-1">
+            <button onClick={() => onSelectBuilding(null)} style={{ color: TEXT_SECONDARY }} className="text-xs mb-1 hover:text-gray-900 flex items-center gap-1">
               {isRTL ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
               {t({ en: 'All Buildings', ar: 'جميع المباني' })}
             </button>

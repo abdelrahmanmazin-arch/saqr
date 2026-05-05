@@ -17,13 +17,13 @@ import {
   Globe, ChevronLeft, ChevronRight,
 } from 'lucide-react'
 
-const BG = '#0A0E1A'
-const SURFACE = '#111827'
-const ELEVATED = '#1F2937'
-const BORDER = '#2D3748'
-const GOLD = '#C9A84C'
-const TEXT_PRIMARY = '#F9FAFB'
-const TEXT_SECONDARY = '#9CA3AF'
+const BG = '#F9FAFB'
+const SURFACE = '#FFFFFF'
+const ELEVATED = '#F3F4F6'
+const BORDER = '#E5E7EB'
+const GOLD = '#1B4F72'
+const TEXT_PRIMARY = '#111827'
+const TEXT_SECONDARY = '#6B7280'
 
 const NAV_ITEMS = [
   { id: 'dashboard',       icon: LayoutDashboard, label: { en: 'Dashboard', ar: 'لوحة التحكم' } },
@@ -79,7 +79,7 @@ export default function CommercialPortal() {
       {/* Top Bar */}
       <div style={{ background: SURFACE, borderBottom: `1px solid ${BORDER}`, height: 56 }} className="flex items-center justify-between px-6 sticky top-0 z-40">
         <div className="flex items-center gap-4">
-          <button onClick={() => setPortal('landing')} style={{ color: TEXT_SECONDARY }} className="text-sm hover:text-[#F9FAFB] flex items-center gap-1 transition-colors">
+          <button onClick={() => setPortal('landing')} style={{ color: TEXT_SECONDARY }} className="text-sm hover:text-gray-900 flex items-center gap-1 transition-colors">
             {isRTL ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
             {t({ en: 'Home', ar: 'الرئيسية' })}
           </button>
@@ -93,7 +93,7 @@ export default function CommercialPortal() {
           <div style={{ background: ELEVATED, border: `1px solid ${BORDER}` }} className="flex rounded-lg overflow-hidden text-xs">
             {owners.map((o, i) => (
               <button key={o.id} onClick={() => { setActiveOwnerIdx(i); setSelectedBuilding(null); setSection('dashboard') }}
-                style={{ background: activeOwnerIdx === i ? GOLD : 'transparent', color: activeOwnerIdx === i ? '#0A0E1A' : TEXT_SECONDARY, padding: '5px 10px' }}
+                style={{ background: activeOwnerIdx === i ? GOLD : 'transparent', color: activeOwnerIdx === i ? 'white' : TEXT_SECONDARY, padding: '5px 10px' }}
                 className="font-medium transition-colors">{o.avatarInitials}</button>
             ))}
           </div>
@@ -101,12 +101,12 @@ export default function CommercialPortal() {
           <div style={{ background: ELEVATED, border: `1px solid ${BORDER}` }} className="flex rounded-lg overflow-hidden text-xs">
             {[{ id: 'owner', label: { en: 'Owner', ar: 'المالك' } }, { id: 'bso', label: { en: 'BSO', ar: 'BSO' } }].map(r => (
               <button key={r.id} onClick={() => setRole(r.id)}
-                style={{ background: role === r.id ? GOLD : 'transparent', color: role === r.id ? '#0A0E1A' : TEXT_SECONDARY, padding: '5px 12px' }}
+                style={{ background: role === r.id ? GOLD : 'transparent', color: role === r.id ? 'white' : TEXT_SECONDARY, padding: '5px 12px' }}
                 className="font-medium transition-colors">{t(r.label)}</button>
             ))}
           </div>
           {/* Language */}
-          <button onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')} style={{ border: `1px solid ${BORDER}`, color: TEXT_SECONDARY }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs hover:text-[#F9FAFB] transition-colors">
+          <button onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')} style={{ border: `1px solid ${BORDER}`, color: TEXT_SECONDARY }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs hover:text-gray-900 transition-colors">
             <Globe size={12} />{lang === 'ar' ? 'EN' : 'AR'}
           </button>
         </div>

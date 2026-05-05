@@ -3,13 +3,13 @@ import { daysUntil } from '../../data/seed'
 import { scheduledTasks } from '../../data/commercialData'
 import { Shield, AlertTriangle, CheckCircle2, Clock, Phone, Radio, ChevronLeft, ChevronRight, CheckSquare } from 'lucide-react'
 
-const BG = '#0A0E1A'
-const SURFACE = '#111827'
-const ELEVATED = '#1F2937'
-const BORDER = '#2D3748'
-const GOLD = '#C9A84C'
-const TEXT_PRIMARY = '#F9FAFB'
-const TEXT_SECONDARY = '#9CA3AF'
+const BG = '#F9FAFB'
+const SURFACE = '#FFFFFF'
+const ELEVATED = '#F3F4F6'
+const BORDER = '#E5E7EB'
+const GOLD = '#1B4F72'
+const TEXT_PRIMARY = '#111827'
+const TEXT_SECONDARY = '#6B7280'
 
 const MOCK_ALERT = {
   id: 'alert-bso-001',
@@ -136,7 +136,7 @@ export default function BSOView({ t, lang, isRTL, buildings, bsoProfile, addToas
         <div style={{ background: SURFACE, border: `2px solid ${responseConfig.color}` }} className="rounded-2xl p-8 max-w-md w-full text-center space-y-4">
           <div style={{ color: responseConfig.color }} className="text-lg font-bold">{t(responseConfig.label)}</div>
           <div style={{ color: TEXT_SECONDARY }} className="text-sm">{t({ en: 'Incident logged. CD has been notified.', ar: 'تم تسجيل الحادثة. تم إخطار الدفاع المدني.' })}</div>
-          <button onClick={dismissAlert} style={{ background: GOLD, color: '#0A0E1A' }} className="px-6 py-2.5 rounded-xl font-bold text-sm">
+          <button onClick={dismissAlert} style={{ background: GOLD, color: 'white' }} className="px-6 py-2.5 rounded-xl font-bold text-sm">
             {t({ en: 'Return to Dashboard', ar: 'العودة للوحة التحكم' })}
           </button>
         </div>
